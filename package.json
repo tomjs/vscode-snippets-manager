@@ -1,0 +1,91 @@
+{
+  "name": "vscode-snippets-manager",
+  "version": "0.0.0",
+  "displayName": "%displayName%",
+  "description": "%description%",
+  "engines": {
+    "node": ">=14.16.0",
+    "vscode": "^1.56.0"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "keywords": [
+    "vscode",
+    "snippet",
+    "snippets",
+    "manage",
+    "manager"
+  ],
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "publisher": "tomjs",
+  "homepage": "https://github.com/tomjs/vscode-snippets-manager/blob/main/README.md",
+  "bugs": {
+    "url": "https://github.com/tomjs/vscode-snippets-manager/issues"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomjs/vscode-snippets-manager.git"
+  },
+  "activationEvents": [],
+  "contributes": {
+    "commands": [],
+    "views": {
+      "tomjs-snippets-manager": [
+        {
+          "id": "tomjsSnippetsManager",
+          "name": "%displayName%"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "tomjs-snippets-manager",
+          "title": "%displayName%",
+          "icon": "resources/logo.svg"
+        }
+      ]
+    }
+  },
+  "icon": "resources/logo.png",
+  "vsce": {
+    "dependencies": false,
+    "yarn": false
+  },
+  "scripts": {
+    "dev": "run-p dev:*",
+    "dev:vsd": "vscode-dev --watch",
+    "dev:dist": "tsup --watch",
+    "build": "vscode-dev && tsup --minify",
+    "lint": "run-s lint:eslint lint:prettier",
+    "lint:eslint": "eslint \"src/**/*.ts\" *.{js,cjs,mjs,ts} --fix --cache",
+    "lint:prettier": "prettier --write .",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@tomjs/node": "^2.2.1",
+    "@tomjs/vscode": "^2.4.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@tomjs/commitlint": "^3.3.0",
+    "@tomjs/eslint": "^3.2.0",
+    "@tomjs/prettier": "^1.4.1",
+    "@tomjs/tsconfig": "^1.6.0",
+    "@tomjs/vscode-dev": "^2.2.2",
+    "@types/node": "^18.19.36",
+    "@types/vscode": "^1.56.0",
+    "eslint": "^8.57.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.3.2",
+    "rimraf": "^5.0.7",
+    "tsup": "^8.1.0",
+    "typescript": "~5.4.5"
+  }
+}
