@@ -1,4 +1,13 @@
 {
   "description": "VSCode 的代码片段管理器",
-  "displayName": "代码片段管理器"
+  "displayName": "代码片段管理器",
+  "tomjs.snippets.addGroup": "添加分组",
+  "tomjs.snippets.addSnippet": "添加片段",
+  "tomjs.snippets.deleteGroup": "删除分组",
+  "tomjs.snippets.deleteSnippet": "删除片段",
+  "tomjs.snippets.editGroup": "编辑分组",
+  "tomjs.snippets.editSnippet": "编辑片段",
+  "tomjs.snippets.refresh": "刷新",
+  "tomjs.snippets.renameGroup": "重命名分组",
+  "tomjs.snippets.renameSnippet": "重命名片段"
 }

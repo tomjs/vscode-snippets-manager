@@ -1,5 +1,5 @@
 {
-  "name": "vscode-snippets-manager",
+  "name": "snippets-manager",
   "version": "0.0.0",
   "displayName": "%displayName%",
   "description": "%description%",
@@ -32,7 +32,15 @@
   },
   "activationEvents": [],
   "contributes": {
-    "commands": [],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "tomjs-snippets-manager",
+          "title": "%displayName%",
+          "icon": "resources/logo.svg"
+        }
+      ]
+    },
     "views": {
       "tomjs-snippets-manager": [
         {
@@ -41,12 +49,111 @@
         }
       ]
     },
-    "viewsContainers": {
-      "activitybar": [
+    "commands": [
+      {
+        "command": "tomjs.snippets.refresh",
+        "title": "%tomjs.snippets.refresh%",
+        "category": "%displayName%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "tomjs.snippets.addGroup",
+        "title": "%tomjs.snippets.addGroup%",
+        "category": "%displayName%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "tomjs.snippets.editGroup",
+        "title": "%tomjs.snippets.editGroup%",
+        "category": "%displayName%",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "tomjs.snippets.renameGroup",
+        "title": "%tomjs.snippets.renameGroup%",
+        "category": "%displayName%",
+        "icon": "$(replace)"
+      },
+      {
+        "command": "tomjs.snippets.deleteGroup",
+        "title": "%tomjs.snippets.deleteGroup%",
+        "category": "%displayName%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "tomjs.snippets.addSnippet",
+        "title": "%tomjs.snippets.addSnippet%",
+        "category": "%displayName%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "tomjs.snippets.editSnippet",
+        "title": "%tomjs.snippets.editSnippet%",
+        "category": "%displayName%",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "tomjs.snippets.renameSnippet",
+        "title": "%tomjs.snippets.renameSnippet%",
+        "category": "%displayName%",
+        "icon": "$(replace)"
+      },
+      {
+        "command": "tomjs.snippets.deleteSnippet",
+        "title": "%tomjs.snippets.deleteSnippet%",
+        "category": "%displayName%",
+        "icon": "$(trash)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
         {
-          "id": "tomjs-snippets-manager",
-          "title": "%displayName%",
-          "icon": "resources/logo.svg"
+          "command": "tomjs.snippets.refresh",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "tomjs.snippets.addGroup",
+          "when": "view == tomjsSnippetsManager",
+          "group": "navigation@1"
+        },
+        {
+          "command": "tomjs.snippets.refresh",
+          "when": "view == tomjsSnippetsManager",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "tomjs.snippets.addSnippet",
+          "when": "view == tomjsSnippetsManager && (viewItem == group || viewItem == scopeGroup)",
+          "group": "inline@1"
+        },
+        {
+          "command": "tomjs.snippets.editGroup",
+          "when": "view == tomjsSnippetsManager && (viewItem == group || viewItem == scopeGroup)",
+          "group": "inline@2"
+        },
+        {
+          "command": "tomjs.snippets.renameGroup",
+          "when": "view == tomjsSnippetsManager && viewItem == scopeGroup",
+          "group": "inline@3"
+        },
+        {
+          "command": "tomjs.snippets.deleteGroup",
+          "when": "view == tomjsSnippetsManager && (viewItem == group || viewItem == scopeGroup)",
+          "group": "inline@4"
+        },
+        {
+          "command": "tomjs.snippets.renameSnippet",
+          "when": "view == tomjsSnippetsManager && viewItem == snippet",
+          "group": "inline@1"
+        },
+        {
+          "command": "tomjs.snippets.deleteSnippet",
+          "when": "view == tomjsSnippetsManager && viewItem == snippet",
+          "group": "inline@2"
         }
       ]
     }
@@ -68,7 +175,8 @@
   },
   "dependencies": {
     "@tomjs/node": "^2.2.1",
-    "@tomjs/vscode": "^2.4.1"
+    "@tomjs/vscode": "^2.4.1",
+    "comment-json": "^4.2.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",

@@ -1,4 +1,13 @@
 {
   "description": "Snippets Manager for VS Code",
-  "displayName": "Snippets Manager"
+  "displayName": "Snippets Manager",
+  "tomjs.snippets.addGroup": "Add Group",
+  "tomjs.snippets.addSnippet": "Add Snippet",
+  "tomjs.snippets.deleteGroup": "Delete Group",
+  "tomjs.snippets.deleteSnippet": "Delete Group",
+  "tomjs.snippets.editGroup": "Edit Group",
+  "tomjs.snippets.editSnippet": "Edit Snippet",
+  "tomjs.snippets.refresh": "Refresh",
+  "tomjs.snippets.renameGroup": "Rename Group",
+  "tomjs.snippets.renameSnippet": "Rename Snippet"
 }
