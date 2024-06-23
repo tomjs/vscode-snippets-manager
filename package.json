@@ -1,7 +1,7 @@
 {
-  "name": "snippets-manager",
-  "version": "1.0.0",
-  "displayName": "%displayName%",
+  "name": "vscode-snippets-manager",
+  "version": "1.0.1",
+  "displayName": "Code Snippets Manager",
   "description": "%description%",
   "engines": {
     "node": ">=14.16.0",
@@ -9,16 +9,17 @@
   },
   "packageManager": "pnpm@9.4.0",
   "keywords": [
-    "vscode",
     "snippet",
     "snippets",
     "manage",
     "manager",
     "language",
     "code",
+    "tool",
     "代码",
     "片段",
-    "管理"
+    "管理",
+    "工具"
   ],
   "categories": [
     "Programming Languages",
