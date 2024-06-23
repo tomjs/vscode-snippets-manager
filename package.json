@@ -1,6 +1,6 @@
 {
   "name": "vscode-snippets-manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "displayName": "Code Snippets Manager",
   "description": "%description%",
   "engines": {
@@ -17,9 +17,7 @@
     "code",
     "tool",
     "代码",
-    "片段",
-    "管理",
-    "工具"
+    "片段"
   ],
   "categories": [
     "Programming Languages",
