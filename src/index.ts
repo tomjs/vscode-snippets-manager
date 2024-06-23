@@ -9,8 +9,8 @@ export async function activate(context: ExtensionContext) {
 
   await searchGroupSnippets();
 
-  registerCommands();
   createSnippetsManagerTreeView();
+  registerCommands();
 }
 
-export function deactivate() {}
+export async function deactivate() {}

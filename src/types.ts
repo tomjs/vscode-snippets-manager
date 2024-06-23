@@ -7,21 +7,28 @@ export enum GroupType {
 }
 
 export interface Group {
-  id: string;
   name: string;
   filePath: string;
   fileName: string;
   snippets?: Snippet[];
-  text?: string;
   json?: CommentJSONValue;
   type?: GroupType;
 }
 
 export interface Snippet {
-  id: string;
   name: string;
   scope?: string;
   prefix: string;
   body: string;
-  description: string;
+  description?: string;
+}
+
+export interface CodeStore {
+  name: string;
+  filePath: string;
+  language: string;
+}
+
+export interface UserConfig {
+  fixedLanguages: string[];
 }

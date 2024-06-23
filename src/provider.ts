@@ -1,7 +1,7 @@
 import { i18n } from '@tomjs/vscode';
-import type { Event, ProviderResult, TreeDataProvider } from 'vscode';
+import type { Event, ProviderResult, TreeDataProvider, TreeView } from 'vscode';
 import { EventEmitter, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
-import { getGroups, searchGroupSnippets } from './data';
+import { getGroupIconPath, getGroups, searchGroupSnippets } from './data';
 import type { Group, Snippet } from './types';
 import { GroupType } from './types';
 import { getIconsPath } from './utils';
@@ -14,30 +14,26 @@ export class GroupTreeItem extends TreeItem {
     this.group = group;
 
     this.tooltip = group.name;
-    const expanded = TreeItemCollapsibleState.Expanded;
+    this.iconPath = getGroupIconPath(group, collapsibleState === TreeItemCollapsibleState.Expanded);
 
     if (group.type === GroupType.language) {
       this.contextValue = 'group';
-      this.iconPath = getIconsPath(expanded ? 'language_opened.svg' : 'language.svg');
     } else {
       this.contextValue = 'scopeGroup';
       this.description = group.filePath;
-      if (group.type === GroupType.global) {
-        this.iconPath = getIconsPath(expanded ? 'global_opened.svg' : 'global.svg');
-      } else if (group.type === GroupType.workspace) {
-        this.iconPath = getIconsPath(expanded ? 'workspace_opened.svg' : 'workspace.svg');
-      }
     }
   }
 }
 
 export class SnippetTreeItem extends TreeItem {
+  groupTreeItem: GroupTreeItem;
   group: Group;
   snippet: Snippet;
 
-  constructor(group: Group, snippet: Snippet) {
+  constructor(groupTreeItem: GroupTreeItem, snippet: Snippet) {
     super(snippet.name, TreeItemCollapsibleState.None);
-    this.group = group;
+    this.group = groupTreeItem.group;
+    this.groupTreeItem = groupTreeItem;
     this.snippet = snippet;
 
     this.contextValue = 'snippet';
@@ -47,6 +43,7 @@ export class SnippetTreeItem extends TreeItem {
     this.command = {
       command: 'tomjs.snippets.editSnippet',
       title: i18n.t('tomjs.snippets.editSnippet'),
+      arguments: [this.group, snippet],
     };
 
     this.iconPath = getIconsPath('snippet.svg');
@@ -57,7 +54,7 @@ function getTreeItemCollapsibleState(group: Group, expandedGroupIds: string[]) {
   if (!group.snippets?.length) {
     return TreeItemCollapsibleState.None;
   }
-  return expandedGroupIds.includes(group.id)
+  return expandedGroupIds.includes(group.filePath)
     ? TreeItemCollapsibleState.Expanded
     : TreeItemCollapsibleState.Collapsed;
 }
@@ -66,6 +63,8 @@ class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
   private _onDidChangeTreeData = new EventEmitter<GroupTreeItem | undefined | null | void>();
   onDidChangeTreeData?: Event<void | TreeItem | TreeItem[] | null | undefined> =
     this._onDidChangeTreeData.event;
+
+  treeView!: TreeView<TreeItem>;
 
   expandedGroupIds: string[] = [];
 
@@ -82,16 +81,19 @@ class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
       const { group } = element;
       if (group) {
         if (Array.isArray(group.snippets)) {
-          return group.snippets.map(snippet => new SnippetTreeItem(group, snippet));
+          return group.snippets.map(snippet => new SnippetTreeItem(element, snippet));
         }
       }
     }
     return [];
   }
 
-  async refresh() {
-    await searchGroupSnippets();
-    this._onDidChangeTreeData.fire();
+  /**
+   * refresh the data provider
+   */
+  async refresh(item?: GroupTreeItem) {
+    await searchGroupSnippets(item?.group?.filePath);
+    this._onDidChangeTreeData.fire(item);
   }
 }
 
@@ -106,7 +108,7 @@ export const createSnippetsManagerTreeView = () => {
     const treeItem = e.element;
     if (treeItem instanceof GroupTreeItem) {
       const ids = provider.expandedGroupIds;
-      const id = treeItem.group.id;
+      const id = treeItem.group.filePath;
       const i = ids.indexOf(id);
       if (i !== -1) {
         ids.splice(i, 1);
@@ -118,7 +120,7 @@ export const createSnippetsManagerTreeView = () => {
     const treeItem = e.element;
     if (treeItem instanceof GroupTreeItem) {
       const ids = provider.expandedGroupIds;
-      const id = treeItem.group.id;
+      const id = treeItem.group.filePath;
       const i = ids.indexOf(id);
       if (i === -1) {
         ids.push(id);
@@ -126,5 +128,5 @@ export const createSnippetsManagerTreeView = () => {
     }
   });
 
-  return treeView;
+  provider.treeView = treeView;
 };
