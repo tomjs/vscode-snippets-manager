@@ -1,6 +1,6 @@
 # VSCode Snippets Manager
 
-Snippets Manager for VS Code.
+VS Code 代码片段管理器 / Snippets Manager for VS Code.
 
 ## 说明 (Note)
 
