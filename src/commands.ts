@@ -98,7 +98,7 @@ async function addGroupCommand() {
       iconPath: Uri.file(getGroupIconPath(GroupType.global)),
     },
     ...getAllWorkspaceFolders().map(s => ({
-      label: i18n.t('text.addGroup.workspace'),
+      label: i18n.t('text.addGroup.workspace', s.name),
       type: GroupType.workspace,
       iconPath: Uri.file(getGroupIconPath(GroupType.workspace)),
       destPath: s.uri.fsPath,

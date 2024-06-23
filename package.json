@@ -187,13 +187,13 @@
     "lint": "run-s lint:eslint lint:prettier",
     "lint:eslint": "eslint \"src/**/*.ts\" *.{js,cjs,mjs,ts} --fix --cache",
     "lint:prettier": "prettier --write .",
+    "release": "pnpm build && vsce pack",
     "prepare": "husky"
   },
   "dependencies": {
     "@tomjs/node": "^2.2.1",
     "@tomjs/vscode": "^2.4.2",
-    "comment-json": "^4.2.3",
-    "lodash": "^4.17.21"
+    "comment-json": "^4.2.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
@@ -204,6 +204,7 @@
     "@tomjs/vscode-dev": "^3.0.2",
     "@types/node": "^18.19.39",
     "@types/vscode": "^1.56.0",
+    "@vscode/vsce": "^2.29.0",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
