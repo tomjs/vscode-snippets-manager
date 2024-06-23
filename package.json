@@ -1,6 +1,6 @@
 {
   "name": "snippets-manager",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "displayName": "%displayName%",
   "description": "%description%",
   "engines": {
