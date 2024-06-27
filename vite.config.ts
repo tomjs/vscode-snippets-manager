@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 import pkg from './package.json';
 
 // https://vitejs.dev/config/
-export default defineConfig(() => {
+export default defineConfig(env => {
   process.env.APP_BUILD_TIME = Date.now() + '';
   process.env.APP_VERSION = pkg.version;
 
@@ -26,6 +26,8 @@ export default defineConfig(() => {
       vscode({
         extension: {
           entry: 'src/index.ts',
+          noExternal: env.command == 'build' ? Object.keys(pkg.dependencies) : [],
+          minify: false,
         },
       }),
     ],

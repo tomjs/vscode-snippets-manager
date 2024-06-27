@@ -194,13 +194,12 @@
     "@tomjs/node": "^2.2.1",
     "@tomjs/vscode": "^2.4.2",
     "@tomjs/vscode-webview": "^1.0.1",
-    "@vee-validate/i18n": "^4.13.1",
-    "@vee-validate/rules": "^4.13.1",
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "comment-json": "^4.2.3",
     "lodash": "^4.17.21",
     "vee-validate": "^4.13.1",
     "vue": "^3.4.30",
+    "vue-i18n": "^9.13.1",
     "yup": "^1.4.0"
   },
   "devDependencies": {

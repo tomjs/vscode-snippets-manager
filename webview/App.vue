@@ -3,7 +3,8 @@ import { vscodeWebview } from '@tomjs/vscode-webview';
 import cloneDeep from 'lodash/cloneDeep';
 import { useForm } from 'vee-validate';
 import { ref } from 'vue';
-import * as Yup from 'yup';
+import { useI18n } from 'vue-i18n';
+import * as yup from 'yup';
 import { Checkbox, Input, TextArea } from './components';
 
 interface FormState {
@@ -50,12 +51,16 @@ function getScope(scope?: string | string[]) {
   }
 }
 
+console.log(navigator.language, navigator.languages);
+
 const { handleSubmit } = useForm({});
 
+const i18n = useI18n();
+
 const rulesSchema = {
-  name: Yup.string().required(),
-  prefix: Yup.string().required(),
-  scope: Yup.array().required().min(1),
+  name: yup.string().required(i18n.t('rule.required')),
+  prefix: yup.string().required(i18n.t('rule.required')),
+  scope: yup.array().min(1, ({ min }) => i18n.t('rule.min_select', [min])),
 };
 
 vscodeWebview.on<{ snippet: FormState; languages: CodeLanguage[] }>('snippet', data => {
@@ -103,11 +108,7 @@ const onRest = () => {
         :rules="rulesSchema.prefix"
       />
     </div>
-    <div
-      v-if="formData.scope && formData.scope.length > 0"
-      class="form-item"
-      style="max-width: 550px"
-    >
+    <div v-if="languages && languages.length" class="form-item" style="max-width: 550px">
       <Checkbox
         v-model:value="formData.scope"
         name="scope"
@@ -130,8 +131,8 @@ const onRest = () => {
       />
     </div>
     <div class="form-item">
-      <vscode-button type="submit">保存</vscode-button>
-      <vscode-button style="margin-left: 8px" @click="onRest">重置</vscode-button>
+      <vscode-button type="submit">{{ $t('submit') }}</vscode-button>
+      <vscode-button style="margin-left: 8px" @click="onRest">{{ $t('reset') }}</vscode-button>
     </div>
   </form>
 </template>
