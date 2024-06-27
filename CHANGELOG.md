@@ -1,4 +1,8 @@
-## [v2.0.0](https://github.com/tomjs/vscode-snippets-manager/compare/v1.0.2...v2.0.0) (2024-06-24)
+## [v2.0.1](https://github.com/tomjs/vscode-snippets-manager/compare/v1.0.2...v2.0.0) (2024-06-28)
+
+- fix: build error
+
+## [v2.0.0](https://github.com/tomjs/vscode-snippets-manager/compare/v1.0.2...v2.0.0) (2024-06-27)
 
 - 使用 `webview` 编辑 `snippet` 详情
 - Use `webview` to edit `snippet` details
