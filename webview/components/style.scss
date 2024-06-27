@@ -1,0 +1,25 @@
+.component-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: calc(1em * 1.5);
+}
+
+label {
+  display: block;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.help-message {
+  position: absolute;
+  bottom: calc(-1.5 * 1em);
+  left: 0;
+  margin: 0;
+  font-size: 14px;
+}
+
+.component-wrapper {
+  &.has-error .help-message {
+    color: #f23648;
+  }
+}

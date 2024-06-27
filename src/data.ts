@@ -6,7 +6,7 @@ import type { CommentObject } from 'comment-json';
 import jsonc from 'comment-json';
 import type { Group, Snippet } from './types';
 import { GroupType } from './types';
-import { getIconsPath, getUserSnippetsPath } from './utils';
+import { getIconsPath, getUserSnippetsPath, text2Array } from './utils';
 
 export const SUFFIX_JSON = '.json';
 export const SUFFIX_CODE_SNIPPETS = '.code-snippets';
@@ -61,9 +61,10 @@ async function readSnippetFile(filePath: string) {
   try {
     const json = jsonc.parse(text, undefined, false) as CommentObject;
     result.json = json;
-    result.snippets = Object.keys(json).map(
-      key => jsonc.assign({ name: key }, json[key]) as Snippet,
-    );
+    result.snippets = Object.keys(json).map(key => {
+      const value = jsonc.assign({ name: key }, json[key]) as Snippet;
+      return jsonc.assign(value, { body: text2Array(value.body) });
+    });
   } catch (e) {
     console.error(e);
   }

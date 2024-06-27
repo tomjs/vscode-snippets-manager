@@ -1,23 +1,23 @@
 import { getCtx } from '@tomjs/vscode';
-import type { CodeStore } from '../types';
+import type { CodeState } from '../types';
 
 const CODE_KEY = 'code_state';
 const USED_LANGUAGES_KEY = 'used_Languages';
 
-export function getStoreCodeState(): CodeStore | undefined {
+export function getCodeState(): CodeState | undefined {
   return getCtx().globalState.get(CODE_KEY);
 }
 
-export function updateStoreCodeState(snippet: CodeStore) {
+export function updateCodeState(snippet: CodeState) {
   return getCtx().globalState.update(CODE_KEY, snippet);
 }
 
-export function getStoreUsedLanguages(): string[] {
+export function getUsedLanguagesState(): string[] {
   return getCtx().globalState.get(USED_LANGUAGES_KEY) || [];
 }
 
-export function updateStoreUsedLanguages(langs: string[]) {
+export function updateUsedLanguagesState(langs: string[]) {
   return getCtx().globalState.update(USED_LANGUAGES_KEY, [
-    ...new Set([...langs, ...getStoreUsedLanguages()]),
+    ...new Set([...langs, ...getUsedLanguagesState()]),
   ]);
 }

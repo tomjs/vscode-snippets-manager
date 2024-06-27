@@ -1,12 +1,15 @@
 import { i18n } from '@tomjs/vscode';
 import { languages, window } from 'vscode';
+import type { languageItem } from '../types';
 import { getPropsFixedLanguages } from './configuration';
-import { getStoreUsedLanguages } from './store';
+import { getUsedLanguagesState } from './state';
 
 export function getCurrentLanguage() {
   const editor = window.activeTextEditor;
   if (editor) return editor.document.languageId;
 }
+
+const TS_GROUPS = ['typescript', 'javascript', 'typescriptreact', 'javascriptreact'];
 
 function getCurrentLanguages() {
   const lang = getCurrentLanguage();
@@ -14,41 +17,21 @@ function getCurrentLanguages() {
     return [];
   }
 
-  if (lang === 'javascriptreact') {
-    return ['javascriptreact'];
-  }
-
-  if (lang === 'typescriptreact') {
-    return ['typescriptreact', 'javascriptreact'];
-  }
-
-  if (lang === 'typescript') {
-    return ['typescript', 'typescriptreact'];
-  }
-
-  if (lang === 'javascript') {
-    return ['typescript', 'javascript', 'typescriptreact', 'javascriptreact'];
+  if (lang.startsWith('javascript') || lang.startsWith('typescript')) {
+    return TS_GROUPS;
   }
 
   return [lang];
 }
 
 export function getSnippetLanguage(langs: string[]) {
-  const list = ['typescriptreact', 'javascriptreact', 'typescript', 'javascript'];
-  for (const langId of list) {
+  for (const langId of TS_GROUPS) {
     if (langs.includes(langId)) {
       return langId;
     }
   }
 
   return langs[0];
-}
-
-export interface languageItem {
-  lang: string;
-  current?: boolean;
-  user?: boolean;
-  used?: boolean;
 }
 
 export function getLanguageTag(item: languageItem) {
@@ -67,17 +50,26 @@ export function getLanguageTag(item: languageItem) {
   return tags.join(' / ');
 }
 
-export async function getLanguages(additionalLanguages?: string[]) {
+export async function getLanguages(selectedLanguages?: string[]) {
   let langs = await languages.getLanguages();
-  if (Array.isArray(additionalLanguages)) {
-    langs = langs.concat(additionalLanguages);
+  if (Array.isArray(selectedLanguages)) {
+    langs = langs.concat(selectedLanguages);
   }
   const set = new Set(langs);
 
+  let selectedLangs = Array.isArray(selectedLanguages) ? selectedLanguages : [];
+  if (
+    selectedLangs.length &&
+    selectedLangs.find(s => ['javascript', 'typescript'].find(l => s.startsWith(l)))
+  ) {
+    selectedLangs = TS_GROUPS;
+  }
   const currentLangs = getCurrentLanguages();
   const propsLangs = getPropsFixedLanguages();
-  const usedLangs = getStoreUsedLanguages();
-  const firstLangs: string[] = [...new Set([...currentLangs, ...propsLangs, ...usedLangs])];
+  const usedLangs = getUsedLanguagesState();
+  const firstLangs: string[] = [
+    ...new Set([...selectedLangs, ...currentLangs, ...propsLangs, ...usedLangs]),
+  ];
   firstLangs.forEach(lang => {
     set.delete(lang);
   });

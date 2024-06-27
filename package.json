@@ -29,7 +29,7 @@
     "url": "https://github.com/tomjs/vscode-snippets-manager/issues"
   },
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "dist/extension/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tomjs/vscode-snippets-manager.git"
@@ -91,16 +91,16 @@
         "icon": "$(add)"
       },
       {
-        "command": "tomjs.snippets.editSnippet",
-        "title": "%tomjs.snippets.editSnippet%",
+        "command": "tomjs.snippets.editSnippetBody",
+        "title": "%tomjs.snippets.editSnippetBody%",
         "category": "%displayName%",
         "icon": "$(edit)"
       },
       {
-        "command": "tomjs.snippets.renameSnippet",
-        "title": "%tomjs.snippets.renameSnippet%",
+        "command": "tomjs.snippets.editSnippet",
+        "title": "%tomjs.snippets.editSnippet%",
         "category": "%displayName%",
-        "icon": "$(replace)"
+        "icon": "$(edit)"
       },
       {
         "command": "tomjs.snippets.deleteSnippet",
@@ -150,7 +150,7 @@
           "group": "inline@4"
         },
         {
-          "command": "tomjs.snippets.renameSnippet",
+          "command": "tomjs.snippets.editSnippet",
           "when": "view == tomjsSnippetsManager && viewItem == snippet",
           "group": "inline@1"
         },
@@ -181,10 +181,11 @@
   "scripts": {
     "dev": "run-p dev:*",
     "dev:vsd": "vscode-dev --watch",
-    "dev:dist": "tsup --watch",
-    "build": "vscode-dev && tsup --minify",
-    "lint": "run-s lint:eslint lint:prettier",
-    "lint:eslint": "eslint \"src/**/*.ts\" *.{js,cjs,mjs,ts} --fix --cache",
+    "dev:dist": "vite",
+    "build": "vscode-dev && vite build",
+    "lint": "run-s lint:eslint lint:stylelint lint:prettier",
+    "lint:eslint": "eslint \"{src,webview}/**/*.{js,cjs,ts,tsx,vue}\" *.{js,cjs,ts} --fix --cache",
+    "lint:stylelint": "stylelint \"webview/**/*.{css,less,scss,html,vue}\" *.html --fix --cache",
     "lint:prettier": "prettier --write .",
     "release": "pnpm build && vsce pack",
     "prepare": "husky"
@@ -192,17 +193,29 @@
   "dependencies": {
     "@tomjs/node": "^2.2.1",
     "@tomjs/vscode": "^2.4.2",
-    "comment-json": "^4.2.3"
+    "@tomjs/vscode-webview": "^1.0.1",
+    "@vee-validate/i18n": "^4.13.1",
+    "@vee-validate/rules": "^4.13.1",
+    "@vscode/webview-ui-toolkit": "^1.4.0",
+    "comment-json": "^4.2.3",
+    "lodash": "^4.17.21",
+    "vee-validate": "^4.13.1",
+    "vue": "^3.4.30",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@tomjs/commitlint": "^3.3.0",
     "@tomjs/eslint": "^3.2.0",
     "@tomjs/prettier": "^1.4.1",
+    "@tomjs/stylelint": "^2.5.0",
     "@tomjs/tsconfig": "^1.6.0",
+    "@tomjs/vite-plugin-vscode": "^2.5.3",
     "@tomjs/vscode-dev": "^3.0.2",
+    "@types/lodash": "^4.17.5",
     "@types/node": "^18.19.39",
     "@types/vscode": "^1.56.0",
+    "@vitejs/plugin-vue": "^5.0.5",
     "@vscode/vsce": "^2.29.0",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
@@ -210,7 +223,9 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.3.2",
     "rimraf": "^5.0.7",
-    "tsup": "^8.1.0",
-    "typescript": "~5.4.5"
+    "sass": "^1.77.6",
+    "stylelint": "^16.6.1",
+    "typescript": "~5.4.5",
+    "vite": "^5.3.1"
   }
 }

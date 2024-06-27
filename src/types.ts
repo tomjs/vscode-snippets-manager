@@ -1,4 +1,5 @@
 import type { CommentJSONValue } from 'comment-json';
+import type { languageItem } from './utils';
 
 export enum GroupType {
   language = 'language',
@@ -19,14 +20,32 @@ export interface Snippet {
   name: string;
   scope?: string;
   prefix: string;
-  body: string;
+  body: string[];
   description?: string;
 }
 
-export interface CodeStore {
+export interface languageItem {
+  lang: string;
+  current?: boolean;
+  user?: boolean;
+  used?: boolean;
+}
+
+export interface CodeState {
   name: string;
   filePath: string;
   language: string;
+}
+
+export interface PostDataSnippet extends Snippet {
+  filePath: string;
+  origin?: string;
+}
+
+export interface PostData {
+  snippet: PostDataSnippet;
+  languages: languageItem[];
+  names: string[];
 }
 
 export interface UserConfig {

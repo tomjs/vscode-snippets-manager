@@ -41,8 +41,8 @@ export class SnippetTreeItem extends TreeItem {
     this.tooltip = this.description;
 
     this.command = {
-      command: 'tomjs.snippets.editSnippet',
-      title: i18n.t('tomjs.snippets.editSnippet'),
+      command: 'tomjs.snippets.editSnippetBody',
+      title: i18n.t('tomjs.snippets.editSnippetBody'),
       arguments: [this.group, snippet],
     };
 
@@ -91,9 +91,10 @@ class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
   /**
    * refresh the data provider
    */
-  async refresh(item?: GroupTreeItem) {
-    await searchGroupSnippets(item?.group?.filePath);
-    this._onDidChangeTreeData.fire(item);
+  async refresh(item?: GroupTreeItem | string) {
+    const filePath = typeof item === 'string' ? item : item?.group?.filePath;
+    await searchGroupSnippets(filePath);
+    this._onDidChangeTreeData.fire(typeof item === 'string' ? undefined : item);
   }
 }
 

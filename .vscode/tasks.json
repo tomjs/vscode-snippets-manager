@@ -19,8 +19,8 @@
         },
         "background": {
           "activeOnStart": true,
-          "beginsPattern": "^.*Build start*$",
-          "endsPattern": "^.*Build success.*$"
+          "beginsPattern": "^.*extension build start.*$",
+          "endsPattern": "^.*extension (build|rebuild) success.*$"
         }
       },
       "isBackground": true,
