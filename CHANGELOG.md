@@ -1,4 +1,9 @@
-## [v2.0.1](https://github.com/tomjs/vscode-snippets-manager/compare/v1.0.2...v2.0.0) (2024-06-28)
+## [v2.1.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.0.1...v2.1.0) (2024-06-28)
+
+- feat: use markdown to show snippet tooltip
+- feat: add more check for the name of snippet
+
+## [v2.0.1](https://github.com/tomjs/vscode-snippets-manager/compare/v2.0.0...v2.0.1) (2024-06-28)
 
 - fix: build error
 
