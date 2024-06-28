@@ -1,0 +1,8 @@
+{
+  "reset": "重置",
+  "rules.exist": "{0} 已存在",
+  "rules.min": "它必须至少有 {0} 个字符",
+  "rules.minArray": "它必须至少选择 {0} 项",
+  "rules.required": "它是必须的",
+  "submit": "提交"
+}

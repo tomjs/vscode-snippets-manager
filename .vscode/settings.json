@@ -1,7 +1,8 @@
 {
   "i18n-ally.localesPaths": [
-    "locales"
+    "locales",
+    "webview/locales"
   ],
-  "i18n-ally.sourceLanguage": "zh-CN",
+  "i18n-ally.sourceLanguage": "en",
   "i18n-ally.displayLanguage": "zh-CN"
 }

@@ -19,6 +19,7 @@
   "text.addGroup.name": "Input group name",
   "text.addGroup.scope": "Scope Snippets Group",
   "text.addGroup.workspace": "Add Group for \"{0}\"",
+  "text.addSnippet.filePath": "Group path \"{0}\" not found",
   "text.addSnippet.notFound": "No group found",
   "text.addSnippet.title": "New Snippet",
   "text.delete.confirm": "Are you sure you want to delete \"{0}\"?",

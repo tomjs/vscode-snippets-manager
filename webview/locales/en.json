@@ -1,0 +1,8 @@
+{
+  "reset": "Reset",
+  "rules.exist": "{0} already exists",
+  "rules.min": "The field must be at least {0} characters",
+  "rules.minArray": "The field must be selected at least {0} items",
+  "rules.required": "The field is required",
+  "submit": "Submit"
+}

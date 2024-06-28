@@ -3,9 +3,9 @@ import { vscodeWebview } from '@tomjs/vscode-webview';
 import cloneDeep from 'lodash/cloneDeep';
 import { useForm } from 'vee-validate';
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import * as yup from 'yup';
 import { Checkbox, Input, TextArea } from './components';
+import { i18n } from './core';
+import { checkMin, checkRequired, required } from './utils/rules';
 
 interface FormState {
   name: string;
@@ -32,6 +32,7 @@ const formData = ref<FormState>({
 });
 
 const languages = ref<string[]>([]);
+const names = ref<string[]>([]);
 
 let formStateCache: FormState = {
   name: '',
@@ -53,32 +54,55 @@ function getScope(scope?: string | string[]) {
 
 console.log(navigator.language, navigator.languages);
 
-const { handleSubmit } = useForm({});
-
-const i18n = useI18n();
-
-const rulesSchema = {
-  name: yup.string().required(i18n.t('rule.required')),
-  prefix: yup.string().required(i18n.t('rule.required')),
-  scope: yup.array().min(1, ({ min }) => i18n.t('rule.min_select', [min])),
-};
-
-vscodeWebview.on<{ snippet: FormState; languages: CodeLanguage[] }>('snippet', data => {
-  console.log('>>>', data);
-  const res = data || {};
-
-  const { scope, body, ...rest } = res.snippet || {};
-
-  formStateCache = {
-    ...rest,
-    scope: getScope(scope),
-    body: Array.isArray(body) ? body.join('\n') : body,
-  };
-
-  formData.value = cloneDeep(formStateCache);
-
-  languages.value = (res?.languages || []).map(s => s.lang);
+const { handleSubmit } = useForm({
+  validationSchema: {
+    name: (value: any) => {
+      if (checkRequired(value)) {
+        return i18n.t('rules.required');
+      }
+      if (formStateCache.name) {
+        if (formStateCache.name !== value && names.value.includes(value)) {
+          return i18n.t('rules.exist', [value]);
+        }
+      } else if (names.value.includes(value)) {
+        return i18n.t('rules.exist', [value]);
+      }
+      return true;
+    },
+    prefix: required(),
+    scope: (value: any) => {
+      if (!Array.isArray(languages.value) || languages.value.length === 0) {
+        return true;
+      }
+      if (!checkMin(value, 1)) {
+        return i18n.t('rules.minArray', { min: 1 });
+      }
+      return true;
+    },
+  },
 });
+
+vscodeWebview.on<{ snippet: FormState; languages: CodeLanguage[]; names: string[] }>(
+  'snippet',
+  data => {
+    console.log('>>>', data);
+    const res = data || {};
+
+    const { scope, body, ...rest } = res.snippet || {};
+
+    formStateCache = {
+      ...rest,
+      scope: getScope(scope),
+      body: Array.isArray(body) ? body.join('\n') : body,
+    };
+
+    formData.value = cloneDeep(formStateCache);
+
+    languages.value = (res?.languages || []).map(s => s.lang);
+
+    names.value = res.names || [];
+  },
+);
 
 const onSubmit = handleSubmit.withControlled(values => {
   console.log('values:', values);
@@ -98,24 +122,13 @@ const onRest = () => {
 <template>
   <form @submit="onSubmit">
     <div class="form-item">
-      <Input v-model:value="formData.name" name="name" label="name" :rules="rulesSchema.name" />
+      <Input v-model:value="formData.name" name="name" label="name" />
     </div>
     <div class="form-item">
-      <Input
-        v-model:value="formData.prefix"
-        name="prefix"
-        label="prefix"
-        :rules="rulesSchema.prefix"
-      />
+      <Input v-model:value="formData.prefix" name="prefix" label="prefix" />
     </div>
     <div v-if="languages && languages.length" class="form-item" style="max-width: 550px">
-      <Checkbox
-        v-model:value="formData.scope"
-        name="scope"
-        label="scope"
-        :options="languages"
-        :rules="rulesSchema.scope"
-      />
+      <Checkbox v-model:value="formData.scope" name="scope" label="scope" :options="languages" />
     </div>
     <div class="form-item">
       <Input v-model:value="formData.description" name="description" label="description" />
