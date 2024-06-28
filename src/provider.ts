@@ -1,6 +1,6 @@
 import { i18n } from '@tomjs/vscode';
 import type { Event, ProviderResult, TreeDataProvider, TreeView } from 'vscode';
-import { EventEmitter, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
+import { EventEmitter, MarkdownString, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
 import { getGroupIconPath, getGroups, searchGroupSnippets } from './data';
 import type { Group, Snippet } from './types';
 import { GroupType } from './types';
@@ -38,7 +38,7 @@ export class SnippetTreeItem extends TreeItem {
 
     this.contextValue = 'snippet';
     this.description = snippet.description;
-    this.tooltip = this.description;
+    this.tooltip = new MarkdownString(snippet.prefix).appendText(`\n${snippet.description || ''}`);
 
     this.command = {
       command: 'tomjs.snippets.editSnippetBody',
