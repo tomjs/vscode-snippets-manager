@@ -74,7 +74,7 @@ const { handleSubmit } = useForm({
       if (!Array.isArray(languages.value) || languages.value.length === 0) {
         return true;
       }
-      if (!checkMin(value, 1)) {
+      if (checkMin(value, 1)) {
         return i18n.t('rules.minArray', { min: 1 });
       }
       return true;
@@ -85,7 +85,6 @@ const { handleSubmit } = useForm({
 vscodeWebview.on<{ snippet: FormState; languages: CodeLanguage[]; names: string[] }>(
   'snippet',
   data => {
-    console.log('>>>', data);
     const res = data || {};
 
     const { scope, body, ...rest } = res.snippet || {};
