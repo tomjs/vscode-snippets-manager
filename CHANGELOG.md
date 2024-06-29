@@ -1,3 +1,7 @@
+## [v2.2.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.1.2...v2.2.0) (2024-06-30)
+
+- feat: add screenshots
+
 ## [v2.1.2](https://github.com/tomjs/vscode-snippets-manager/compare/v2.1.1...v2.1.2) (2024-06-29)
 
 - fix: scope check
