@@ -143,7 +143,7 @@ const onRest = () => {
       />
     </div>
     <div class="form-item">
-      <vscode-button type="submit">{{ $t('submit') }}</vscode-button>
+      <vscode-button type="submit">{{ $t('save') }}</vscode-button>
       <vscode-button style="margin-left: 8px" @click="onRest">{{ $t('reset') }}</vscode-button>
     </div>
   </form>
