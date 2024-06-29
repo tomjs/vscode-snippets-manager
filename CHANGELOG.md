@@ -1,3 +1,7 @@
+## [v2.1.2](https://github.com/tomjs/vscode-snippets-manager/compare/v2.1.1...v2.1.2) (2024-06-29)
+
+- fix: scope check
+
 ## [v2.1.1](https://github.com/tomjs/vscode-snippets-manager/compare/v2.1.0...v2.1.1) (2024-06-29)
 
 - fix: vsce pack exclude webview folder
