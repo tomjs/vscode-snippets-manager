@@ -225,12 +225,5 @@
     "stylelint": "^16.6.1",
     "typescript": "~5.4.5",
     "vite": "^5.3.2"
-  },
-  "pnpm": {
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "vite"
-      ]
-    }
   }
 }

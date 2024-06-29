@@ -55,6 +55,7 @@ tsconfig.tsbuildinfo
 # project
 src
 locales
+webview
 
 .husky
 .commitlintrc*
