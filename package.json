@@ -1,6 +1,6 @@
 {
   "name": "vscode-snippets-manager",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "displayName": "Code Snippets Manager",
   "description": "%description%",
   "engines": {

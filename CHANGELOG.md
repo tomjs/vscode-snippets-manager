@@ -1,3 +1,7 @@
+## [v2.3.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.2.0...v2.3.0) (2024-07-16)
+
+- feat: add code snippet drag and drop
+
 ## [v2.2.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.1.2...v2.2.0) (2024-06-30)
 
 - feat: add screenshots
