@@ -20,6 +20,7 @@ import {
   isLanguageGroup,
   SUFFIX_CODE_SNIPPETS,
   SUFFIX_JSON,
+  writeSnippetFile,
 } from './data';
 import { closeSnippetPanel, openSnippetPanel } from './panel';
 import type { GroupTreeItem, SnippetTreeItem } from './provider';
@@ -273,21 +274,26 @@ async function pickSnippet(group: Group) {
 
 export async function addOrUpdateSnippet(group: Group, snippet: Snippet) {
   const { name, prefix, scope, body, description } = snippet;
-  await writeFile(
+
+  await writeSnippetFile(
     group.filePath,
-    jsonc.stringify(
-      jsonc.assign(group.json || {}, {
-        [name]: {
-          prefix,
-          scope: scope || undefined,
-          body,
-          description,
-        },
-      }),
-      null,
-      2,
-    ),
+    jsonc.assign(group.json, {
+      [name]: {
+        prefix,
+        scope: scope || undefined,
+        body,
+        description,
+      },
+    }),
   );
+}
+
+export async function deleteSnippet(group: Group, snippetName: string) {
+  const snippets = group?.json;
+  if (snippets) {
+    delete snippets[snippetName];
+  }
+  await writeSnippetFile(group.filePath, snippets);
 }
 
 const codeSnippetDir = path.join(os.homedir(), '.tomjs/vscode-snippets-manager');
@@ -376,11 +382,7 @@ async function deleteSnippetCommand(treeItem?: SnippetTreeItem) {
   const confirm = await showPickYesOrNo(i18n.t('text.delete.confirm', snippet.name));
   if (!confirm) return;
 
-  const snippets = group?.json;
-  if (snippets) {
-    delete snippets[snippet.name];
-  }
-  await writeFile(group.filePath, jsonc.stringify(snippets, null, 2));
+  await deleteSnippet(group, snippet.name);
   showInfo(i18n.t('text.delete.success', snippet.name));
   await provider.refresh(group.filePath);
 }

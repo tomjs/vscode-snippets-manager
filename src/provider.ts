@@ -1,6 +1,22 @@
 import { i18n } from '@tomjs/vscode';
-import type { Event, ProviderResult, TreeDataProvider, TreeView } from 'vscode';
-import { EventEmitter, MarkdownString, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
+import type {
+  CancellationToken,
+  DataTransfer,
+  Event,
+  ProviderResult,
+  TreeDataProvider,
+  TreeDragAndDropController,
+  TreeView,
+} from 'vscode';
+import {
+  DataTransferItem,
+  EventEmitter,
+  MarkdownString,
+  TreeItem,
+  TreeItemCollapsibleState,
+  window,
+} from 'vscode';
+import { addOrUpdateSnippet, deleteSnippet } from './commands';
 import { getGroupIconPath, getGroups, searchGroupSnippets } from './data';
 import type { Group, Snippet } from './types';
 import { GroupType } from './types';
@@ -72,19 +88,25 @@ class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
     return element;
   }
   getChildren(element?: TreeItem): ProviderResult<TreeItem[]> {
-    if (!element) {
-      return getGroups().map(
-        group =>
-          new GroupTreeItem(group, getTreeItemCollapsibleState(group, this.expandedGroupIds)),
-      );
-    } else if (element instanceof GroupTreeItem) {
-      const { group } = element;
-      if (group) {
-        if (Array.isArray(group.snippets)) {
-          return group.snippets.map(snippet => new SnippetTreeItem(element, snippet));
+    try {
+      if (!element) {
+        return getGroups().map(
+          group =>
+            new GroupTreeItem(group, getTreeItemCollapsibleState(group, this.expandedGroupIds)),
+        );
+      } else if (element instanceof GroupTreeItem) {
+        const { group } = element;
+        if (group) {
+          if (Array.isArray(group.snippets)) {
+            return group.snippets.map(snippet => new SnippetTreeItem(element, snippet));
+          }
         }
       }
+      return [];
+    } catch (e: any) {
+      console.error(e);
     }
+
     return [];
   }
 
@@ -96,6 +118,68 @@ class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
     await searchGroupSnippets(filePath);
     this._onDidChangeTreeData.fire(typeof item === 'string' ? undefined : item);
   }
+
+  refreshTree() {
+    this._onDidChangeTreeData.fire();
+  }
+}
+
+const MIMETYPE = 'application/vnd.code.tree.tomjssnippetsmanager';
+class SnippetTreeDragAndDropController implements TreeDragAndDropController<TreeItem> {
+  dropMimeTypes: readonly string[] = [MIMETYPE];
+  dragMimeTypes: readonly string[] = [MIMETYPE];
+
+  provider: SnippetsManagerTreeDataProvider;
+
+  constructor(provider: SnippetsManagerTreeDataProvider) {
+    this.provider = provider;
+  }
+
+  handleDrag(
+    source: readonly TreeItem[],
+    dataTransfer: DataTransfer,
+    token: CancellationToken,
+  ): Thenable<void> | void {
+    if (source.length !== 1 || token.isCancellationRequested) return;
+
+    const node = source[0];
+    if (node instanceof GroupTreeItem) return;
+
+    dataTransfer.set(MIMETYPE, new DataTransferItem(node));
+  }
+
+  async handleDrop(
+    target: GroupTreeItem | SnippetTreeItem | undefined,
+    dataTransfer: DataTransfer,
+    token: CancellationToken,
+  ) {
+    if (!target || token.isCancellationRequested) return;
+
+    const transferItem = dataTransfer.get(MIMETYPE);
+    const source: SnippetTreeItem = transferItem?.value;
+    if (!source) return;
+
+    if (source.group.filePath === target.group.filePath) {
+      return;
+    }
+
+    const srcType = source.group.type;
+    const destType = target.group.type;
+    if (srcType !== destType) {
+      if (destType === GroupType.language) {
+        delete source.snippet.scope;
+      } else {
+        source.snippet.scope = source.group.name;
+      }
+    }
+
+    // add snippet
+    await addOrUpdateSnippet(target.group, source.snippet);
+    // delete snippet
+    await deleteSnippet(source.group, source.snippet.name);
+
+    await provider.refresh();
+  }
 }
 
 export const provider = new SnippetsManagerTreeDataProvider();
@@ -103,6 +187,7 @@ export const provider = new SnippetsManagerTreeDataProvider();
 export const createSnippetsManagerTreeView = () => {
   const treeView = window.createTreeView('tomjsSnippetsManager', {
     treeDataProvider: provider,
+    dragAndDropController: new SnippetTreeDragAndDropController(provider),
   });
 
   treeView.onDidCollapseElement(async e => {

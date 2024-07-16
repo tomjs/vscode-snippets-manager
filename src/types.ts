@@ -1,5 +1,4 @@
-import type { CommentJSONValue } from 'comment-json';
-import type { languageItem } from './utils';
+import type { CommentObject } from 'comment-json';
 
 export enum GroupType {
   language = 'language',
@@ -12,7 +11,7 @@ export interface Group {
   filePath: string;
   fileName: string;
   snippets?: Snippet[];
-  json?: CommentJSONValue;
+  json: CommentObject;
   type?: GroupType;
 }
 

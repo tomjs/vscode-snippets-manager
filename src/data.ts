@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { readFile } from '@tomjs/node';
+import { readFile, writeFile } from '@tomjs/node';
 import { getAllWorkspaceFolders } from '@tomjs/vscode';
 import type { CommentObject } from 'comment-json';
 import jsonc from 'comment-json';
+import cloneDeep from 'lodash/cloneDeep';
 import type { Group, Snippet } from './types';
 import { GroupType } from './types';
 import { getIconsPath, getUserSnippetsPath, text2Array } from './utils';
@@ -60,16 +61,49 @@ async function readSnippetFile(filePath: string) {
 
   try {
     const json = jsonc.parse(text, undefined, false) as CommentObject;
-    result.json = json;
+    result.json = json || {};
     result.snippets = Object.keys(json).map(key => {
+      // @ts-ignore
       const value = jsonc.assign({ name: key }, json[key]) as Snippet;
-      return jsonc.assign(value, { body: text2Array(value.body) });
+      return jsonc.assign(value, {
+        body: text2Array(value.body),
+        // @ts-ignore
+        prefix: typeof value.prefix !== 'string' ? value.prefix.join(',') : value.prefix,
+      });
     });
   } catch (e) {
     console.error(e);
   }
 
   return result;
+}
+
+export async function writeSnippetFile(filePath: string, json: CommentObject) {
+  const values = cloneDeep(json);
+  Object.entries(values).forEach(([_key, value]) => {
+    // @ts-ignore
+    const snippet = value as Snippet;
+    if (!snippet || typeof snippet.prefix !== 'string') return;
+
+    const prefix: string = snippet.prefix || '';
+    const prefixArr = [
+      ...new Set(
+        prefix
+          .split(',')
+          .map(s => s.trim())
+          .filter(s => s),
+      ),
+    ];
+
+    if (prefixArr.length > 1) {
+      // @ts-ignore
+      snippet.prefix = prefixArr;
+    } else {
+      snippet.prefix = prefixArr.join('');
+    }
+  });
+
+  await writeFile(filePath, jsonc.stringify(values, null, 2));
 }
 
 /**

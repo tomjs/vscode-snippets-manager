@@ -2,7 +2,7 @@ import { getCtx, i18n } from '@tomjs/vscode';
 import fs from 'fs';
 import type { Disposable, Webview, WebviewPanel } from 'vscode';
 import { ViewColumn, window } from 'vscode';
-import { addOrUpdateSnippet, openEditSnippetPanel, openEditSnippetPanel } from './commands';
+import { addOrUpdateSnippet, openEditSnippetPanel } from './commands';
 import { getGroups } from './data';
 import { provider } from './provider';
 import type { PostDataSnippet } from './types';
@@ -92,7 +92,7 @@ class SnippetPanel {
       async (message: any) => {
         const type = message.type;
         const data = message.data;
-        console.log(`type:`, type, data);
+        // console.log(`type:`, type, data);
         if (type === 'save') {
           this.addOrUpdateSnippet(data);
         }
