@@ -18,6 +18,7 @@ class SnippetPanel {
   constructor() {
     const panel = window.createWebviewPanel('snippetInfoPanel', 'Snippet', ViewColumn.One, {
       enableScripts: true,
+      retainContextWhenHidden: true,
     });
 
     this.panel = panel;
@@ -69,8 +70,6 @@ class SnippetPanel {
 
     const { origin, ...snippet } = data || {};
     const { name } = snippet;
-
-    console.log(data);
 
     const snippets = group.snippets;
     const addOrUpdate = (name: string) => {
