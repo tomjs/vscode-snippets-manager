@@ -14,16 +14,14 @@ This project is inspired by the extension [Easy Snippet](https://marketplace.vis
 
 ## 功能 Features
 
-### 支持类型 Supported Types
-
-- 语言片段 Language Snippets
-- 全局片段 Global Snippets
-- 工作空间片段 Workspace Snippets
-
-### 国际化 Internationalization
-
-- 简体中文
-- English
+- 支持多类型片段 Support multiple types of Snippets
+  - 语言 Language
+  - 全局 Global
+  - 工作空间 Workspace
+- 支持片段的拖拽排序 Support drag and sort of snippets
+- 国际化 Internationalization
+  - 简体中文
+  - English
 
 ### 属性 Properties
 

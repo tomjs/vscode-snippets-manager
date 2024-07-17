@@ -1,3 +1,7 @@
+## [v2.5.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.4.0...v2.5.0) (2024-07-17)
+
+- feat: add the drag and sort of snippets
+
 ## [v2.4.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.3.0...v2.4.0) (2024-07-17)
 
 - feat: add scopeLanguages property
