@@ -3,6 +3,7 @@ import type { UserConfig } from '../types';
 
 export const configuration = new Configuration<UserConfig>('tomjs.snippets', {
   fixedLanguages: [],
+  scopeLanguages: [],
 });
 
 function getArrayValue(key: string) {
@@ -16,4 +17,12 @@ export const getPropsFixedLanguages = (): string[] => {
 
 export const updatePropsFixedLanguages = async (langs: string[]) => {
   await configuration.update('fixedLanguages', langs);
+};
+
+export const getPropsScopeLanguages = (): string[] => {
+  return getArrayValue('scopeLanguages');
+};
+
+export const updatePropScopeLanguages = async (langs: string[]) => {
+  await configuration.update('scopeLanguages', langs);
 };

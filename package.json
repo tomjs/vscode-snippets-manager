@@ -167,7 +167,13 @@
         "properties": {
           "tomjs.snippets.fixedLanguages": {
             "order": 0,
-            "description": "%properties.fixed%"
+            "type": "array",
+            "description": "%properties.fixedLanguages%"
+          },
+          "tomjs.snippets.scopeLanguages": {
+            "order": 1,
+            "type": "array",
+            "description": "%properties.scopeLanguages%"
           }
         }
       }

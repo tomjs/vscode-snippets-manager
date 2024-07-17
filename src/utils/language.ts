@@ -1,7 +1,7 @@
 import { i18n } from '@tomjs/vscode';
 import { languages, window } from 'vscode';
-import type { languageItem } from '../types';
-import { getPropsFixedLanguages } from './configuration';
+import type { LanguageItem } from '../types';
+import { getPropsFixedLanguages, getPropsScopeLanguages } from './configuration';
 import { getUsedLanguagesState } from './state';
 
 export function getCurrentLanguage() {
@@ -34,7 +34,7 @@ export function getSnippetLanguage(langs: string[]) {
   return langs[0];
 }
 
-export function getLanguageTag(item: languageItem) {
+export function getLanguageTag(item: LanguageItem) {
   const tags: string[] = [];
   if (item.current) {
     tags.push(i18n.t('text.word.current'));
@@ -50,8 +50,15 @@ export function getLanguageTag(item: languageItem) {
   return tags.join(' / ');
 }
 
-export async function getLanguages(selectedLanguages?: string[]) {
-  let langs = await languages.getLanguages();
+export async function getLanguages(selectedLanguages?: string[], showScopeLanguages?: boolean) {
+  let langs: string[] = [];
+  if (showScopeLanguages) {
+    langs = getPropsScopeLanguages();
+  }
+  if (langs.length === 0) {
+    langs = await languages.getLanguages();
+  }
+
   if (Array.isArray(selectedLanguages)) {
     langs = langs.concat(selectedLanguages);
   }
@@ -79,7 +86,7 @@ export async function getLanguages(selectedLanguages?: string[]) {
 
   if (firstLangs.length) langs.unshift(...firstLangs);
 
-  return langs.map((s): languageItem => {
+  return langs.map((s): LanguageItem => {
     return {
       lang: s,
       current: currentLangs.includes(s),

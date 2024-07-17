@@ -12,6 +12,41 @@ Supports the management of code snippets in the global and current workspace.
 
 This project is inspired by the extension [Easy Snippet](https://marketplace.visualstudio.com/items?itemName=inu1255.easy-snippet) and refers to his code and ideas. Thanks very much. Some icon resources used in the project are from [vscode-icons](https://github.com/vscode-icons/vscode-icons), and only the color is modified. This project is developed out of interest and personal needs, and may not meet the needs of everyone.
 
+## 功能 Features
+
+### 支持类型 Supported Types
+
+- 语言片段 Language Snippets
+- 全局片段 Global Snippets
+- 工作空间片段 Workspace Snippets
+
+### 国际化 Internationalization
+
+- 简体中文
+- English
+
+### 属性 Properties
+
+- `tomjs.snippets.fixedLanguages`：代码片段优先可选语言。Optional languages ​​for snippets to be displayed first
+- `tomjs.snippets.scopeLanguages`：代码片段 scope 属性的可选语言，未配置时为所有被支持的语言。Optional languages for the scope attribute of the snippets. If not configured, it will be all supported languages.
+
+比如前端开发者，可以如下设置 For example, front-end developers can set it as follows
+
+```json
+{
+  "tomjs.snippets.scopeLanguages": [
+    "typescript",
+    "javascript",
+    "typescriptreact",
+    "javascriptreact",
+    "vue",
+    "html",
+    "less",
+    "scss"
+  ]
+}
+```
+
 ## 截图 Screenshots
 
 部分截图，具体请操作。Some screenshots, please operate for details.

@@ -346,7 +346,7 @@ async function addSnippetCommand(treeItem?: GroupTreeItem) {
 
   closeSnippetFile();
 
-  const languages = isLanguageGroup(group) ? [] : await getLanguages();
+  const languages = isLanguageGroup(group) ? [] : await getLanguages([], true);
   await openSnippetPanel(i18n.t('text.addSnippet.title')).postMessage<PostData>('snippet', {
     snippet: {
       name: '',
@@ -391,7 +391,7 @@ export async function openEditSnippetPanel(group: Group, snippet: Snippet) {
   closeSnippetFile();
 
   const scopes = (snippet.scope || '').split(',').map(s => s.trim());
-  const languages = isLanguageGroup(group) ? [] : await getLanguages(scopes);
+  const languages = isLanguageGroup(group) ? [] : await getLanguages(scopes, true);
   await openSnippetPanel(snippet.name).postMessage<PostData>('snippet', {
     snippet: { ...snippet, filePath: group.filePath },
     languages,

@@ -23,7 +23,7 @@ export interface Snippet {
   description?: string;
 }
 
-export interface languageItem {
+export interface LanguageItem {
   lang: string;
   current?: boolean;
   user?: boolean;
@@ -43,10 +43,11 @@ export interface PostDataSnippet extends Snippet {
 
 export interface PostData {
   snippet: PostDataSnippet;
-  languages: languageItem[];
+  languages: LanguageItem[];
   names: string[];
 }
 
 export interface UserConfig {
   fixedLanguages: string[];
+  scopeLanguages: string[];
 }
