@@ -120,13 +120,20 @@ const onRest = () => {
 
 <template>
   <form @submit="onSubmit">
-    <div class="form-item">
-      <Input v-model:value="formData.name" name="name" label="name" />
+    <div class="form-item" style="margin-bottom: 16px">
+      <vscode-button type="submit">{{ $t('save') }}</vscode-button>
+      <vscode-button style="margin-left: 8px" @click="onRest">{{ $t('reset') }}</vscode-button>
     </div>
-    <div class="form-item">
-      <Input v-model:value="formData.prefix" name="prefix" label="prefix" />
+    <div class="form-item form-item-flex">
+      <div style="width: 250px">
+        <Input v-model:value="formData.name" name="name" label="name" />
+      </div>
+      <div style="width: 250px">
+        <Input v-model:value="formData.prefix" name="prefix" label="prefix" />
+      </div>
     </div>
-    <div v-if="languages && languages.length" class="form-item" style="max-width: 550px">
+
+    <div v-if="languages && languages.length" class="form-item">
       <Checkbox v-model:value="formData.scope" name="scope" label="scope" :options="languages" />
     </div>
     <div class="form-item">
@@ -142,10 +149,6 @@ const onRest = () => {
         :rows="10"
       />
     </div>
-    <div class="form-item">
-      <vscode-button type="submit">{{ $t('save') }}</vscode-button>
-      <vscode-button style="margin-left: 8px" @click="onRest">{{ $t('reset') }}</vscode-button>
-    </div>
   </form>
 </template>
 
@@ -156,5 +159,15 @@ form {
   align-items: flex-start;
   justify-content: center;
   height: 100%;
+}
+
+.form-item {
+  width: 550px;
+}
+
+.form-item-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
