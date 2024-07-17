@@ -3,7 +3,6 @@ import os from 'node:os';
 import path from 'node:path';
 import { mkdirp, rm, writeFile } from '@tomjs/node';
 import { getAllWorkspaceFolders, getCtx, i18n } from '@tomjs/vscode';
-import jsonc from 'comment-json';
 import type { QuickPickItem, TextDocument } from 'vscode';
 import {
   commands,
@@ -15,6 +14,7 @@ import {
   workspace,
 } from 'vscode';
 import {
+  deleteSnippet,
   getGroupIconPath,
   getGroups,
   isLanguageGroup,
@@ -272,30 +272,6 @@ async function pickSnippet(group: Group) {
   if (pick) return pick.snippet;
 }
 
-export async function addOrUpdateSnippet(group: Group, snippet: Snippet) {
-  const { name, prefix, scope, body, description } = snippet;
-
-  await writeSnippetFile(
-    group.filePath,
-    jsonc.assign(group.json, {
-      [name]: {
-        prefix,
-        scope: scope || undefined,
-        body,
-        description,
-      },
-    }),
-  );
-}
-
-export async function deleteSnippet(group: Group, snippetName: string) {
-  const snippets = group?.json;
-  if (snippets) {
-    delete snippets[snippetName];
-  }
-  await writeSnippetFile(group.filePath, snippets);
-}
-
 const codeSnippetDir = path.join(os.homedir(), '.tomjs/vscode-snippets-manager');
 export const codeSnippetFile = path.join(codeSnippetDir, 'code.snippet');
 export const fixFilePath = (fileName: string) => fileName.toLocaleLowerCase();
@@ -431,13 +407,13 @@ async function onDidSaveTextDocument(doc?: TextDocument) {
 
     const groupPath = fixFilePath(state.filePath);
     const group = getGroups().find(g => fixFilePath(g.filePath) === groupPath);
-    if (!group || !group.json) return;
+    if (!group || !Array.isArray(group.snippets)) return;
 
-    const snippet = (group.snippets || []).find(s => s.name === state.name);
+    const snippet = group.snippets.find(s => s.name === state.name);
     if (snippet) {
       if (array2Text(snippet.body) !== doc.getText()) {
         snippet.body = text2Array(doc.getText());
-        await addOrUpdateSnippet(group, snippet);
+        await writeSnippetFile(group.filePath, group.snippets);
         showInfo(i18n.t('text.save.success', snippet.name));
       }
     }

@@ -15,7 +15,7 @@ export function array2Text(text?: any): string {
 
 export function text2Array(text?: any): string[] {
   if (Array.isArray(text)) {
-    return text;
+    return [...text];
   }
 
   if (!text || typeof text !== 'string') {

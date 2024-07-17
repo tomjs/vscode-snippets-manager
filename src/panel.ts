@@ -2,8 +2,8 @@ import { getCtx, i18n } from '@tomjs/vscode';
 import fs from 'fs';
 import type { Disposable, Webview, WebviewPanel } from 'vscode';
 import { ViewColumn, window } from 'vscode';
-import { addOrUpdateSnippet, openEditSnippetPanel } from './commands';
-import { getGroups } from './data';
+import { openEditSnippetPanel } from './commands';
+import { getGroups, writeSnippetFile } from './data';
 import { provider } from './provider';
 import type { PostDataSnippet } from './types';
 import { showError, showInfo } from './utils';
@@ -67,23 +67,33 @@ class SnippetPanel {
       return;
     }
 
-    const { origin, name, prefix, scope, body, description } = data || {};
+    const { origin, ...snippet } = data || {};
+    const { name } = snippet;
 
-    const snippets = group?.json;
-    if (snippets && origin && origin !== name) {
-      delete snippets[origin];
+    console.log(data);
+
+    const snippets = group.snippets;
+    const addOrUpdate = (name: string) => {
+      const i = snippets.findIndex(s => s.name === name);
+      if (i !== -1) {
+        snippets[i] = snippet;
+      } else {
+        snippets.push(snippet);
+      }
+    };
+
+    if (origin) {
+      addOrUpdate(origin !== name ? origin : name);
+    } else {
+      snippets.push(snippet);
     }
+    await writeSnippetFile(group.filePath, snippets);
 
-    await addOrUpdateSnippet(group, { name, prefix, scope, body, description });
     await provider.refresh(filePath);
     showInfo(origin ? i18n.t('text.save.success', name) : i18n.t('text.add.success', name));
 
     if (!origin || (origin && origin !== name)) {
-      const snippet = group.snippets?.find(s => s.name === name);
-      if (!snippet) {
-        return;
-      }
-      openEditSnippetPanel(group, snippet!);
+      openEditSnippetPanel(group, snippet);
     }
   }
 

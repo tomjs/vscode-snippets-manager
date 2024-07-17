@@ -42,7 +42,7 @@ function getSnippetGroups(dirPath: string, names: string[], suffix: string, type
           fileName,
           filePath,
           type,
-          ...snippets,
+          snippets,
         } as Group;
       }),
   );
@@ -50,60 +50,88 @@ function getSnippetGroups(dirPath: string, names: string[], suffix: string, type
 
 async function readSnippetFile(filePath: string) {
   const text = await readFile(filePath);
-  const result = {
-    json: {} as CommentObject,
-    snippets: [] as Snippet[],
-  };
 
   if (!text) {
-    return result;
+    return [];
   }
 
   try {
-    const json = jsonc.parse(text, undefined, false) as CommentObject;
-    result.json = json || {};
-    result.snippets = Object.keys(json).map(key => {
+    const json = jsonc.parse(text, undefined, true) as CommentObject;
+    return Object.keys(json).map(key => {
       // @ts-ignore
-      const value = jsonc.assign({ name: key }, json[key]) as Snippet;
-      return jsonc.assign(value, {
+      const value = Object.assign({ name: key }, json[key]) as Snippet;
+      return Object.assign(value, {
         body: text2Array(value.body),
         // @ts-ignore
         prefix: typeof value.prefix !== 'string' ? value.prefix.join(',') : value.prefix,
-      });
+      }) as Snippet;
     });
   } catch (e) {
     console.error(e);
   }
 
-  return result;
+  return [];
 }
 
-export async function writeSnippetFile(filePath: string, json: CommentObject) {
-  const values = cloneDeep(json);
-  Object.entries(values).forEach(([_key, value]) => {
-    // @ts-ignore
-    const snippet = value as Snippet;
-    if (!snippet || typeof snippet.prefix !== 'string') return;
-
-    const prefix: string = snippet.prefix || '';
-    const prefixArr = [
-      ...new Set(
-        prefix
-          .split(',')
-          .map(s => s.trim())
-          .filter(s => s),
-      ),
-    ];
-
-    if (prefixArr.length > 1) {
-      // @ts-ignore
-      snippet.prefix = prefixArr;
-    } else {
-      snippet.prefix = prefixArr.join('');
+export async function writeSnippetFile(filePath: string, snippets: Snippet[]) {
+  const json: Record<string, any> = {};
+  cloneDeep(snippets).forEach(snippet => {
+    const { name, scope, body, description } = snippet;
+    let prefix = snippet.prefix;
+    if (prefix) {
+      const prefixArr = [
+        ...new Set(
+          prefix
+            .split(',')
+            .map(s => s.trim())
+            .filter(s => s),
+        ),
+      ];
+      if (prefixArr.length > 1) {
+        // @ts-ignore
+        prefix = prefixArr;
+      } else {
+        prefix = prefixArr.join('');
+      }
     }
+
+    json[name] = {
+      scope: scope || undefined,
+      prefix,
+      body,
+      description,
+    };
   });
 
-  await writeFile(filePath, jsonc.stringify(values, null, 2));
+  await writeFile(filePath, JSON.stringify(json, null, 2));
+}
+
+export async function addOrUpdateSnippet(group: Group, snippet: Snippet, writeFile = true) {
+  const { name } = snippet;
+  const snippets = group.snippets || [];
+  const index = snippets.findIndex(s => s.name === name);
+
+  if (index !== -1) {
+    snippets[index] = snippet;
+  } else {
+    snippets.push(snippet);
+  }
+
+  if (writeFile) {
+    await writeSnippetFile(group.filePath, snippets);
+  }
+}
+
+export async function deleteSnippet(group: Group, snippetName: string, writeFile = true) {
+  const { snippets } = group;
+  const i = snippets.findIndex(s => s.name === snippetName);
+  if (i !== -1) {
+    snippets.splice(i, 1);
+  }
+
+  if (writeFile) {
+    await writeSnippetFile(group.filePath, snippets);
+  }
 }
 
 /**

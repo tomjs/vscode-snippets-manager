@@ -16,8 +16,7 @@ import {
   TreeItemCollapsibleState,
   window,
 } from 'vscode';
-import { addOrUpdateSnippet, deleteSnippet } from './commands';
-import { getGroupIconPath, getGroups, searchGroupSnippets } from './data';
+import { getGroupIconPath, getGroups, searchGroupSnippets, writeSnippetFile } from './data';
 import type { Group, Snippet } from './types';
 import { GroupType } from './types';
 import { getIconsPath } from './utils';
@@ -159,24 +158,62 @@ class SnippetTreeDragAndDropController implements TreeDragAndDropController<Tree
     const source: SnippetTreeItem = transferItem?.value;
     if (!source) return;
 
-    if (source.group.filePath === target.group.filePath) {
+    console.log('target:', target);
+    console.log('source:', source);
+
+    const sg = source.group;
+    const tg = target.group;
+
+    if (
+      sg.filePath === tg.filePath &&
+      source instanceof SnippetTreeItem &&
+      target instanceof SnippetTreeItem &&
+      source.snippet.name === target.snippet.name
+    ) {
       return;
     }
 
-    const srcType = source.group.type;
-    const destType = target.group.type;
-    if (srcType !== destType) {
-      if (destType === GroupType.language) {
+    // two possibilities
+    // 1. target is GroupTreeItem: move the snippet to the top of the target group
+    // 2. target is SnippetTreeItem: move the snippet to the after of the target snippet
+
+    // same group:
+    const sameGroup = sg.filePath === tg.filePath;
+    if (sameGroup && tg.snippets.length <= 1) {
+      return;
+    }
+
+    // different group
+    if (!sameGroup && sg.type != tg.type) {
+      if (tg.type === GroupType.language) {
         delete source.snippet.scope;
       } else {
-        source.snippet.scope = source.group.name;
+        let scope = sg.name;
+        if (scope === 'javascript') {
+          scope = 'javascript,typescript';
+        }
+        source.snippet.scope = scope;
       }
     }
 
-    // add snippet
-    await addOrUpdateSnippet(target.group, source.snippet);
-    // delete snippet
-    await deleteSnippet(source.group, source.snippet.name);
+    const sIndex = sg.snippets.findIndex(s => s.name === source.snippet.name);
+    if (sIndex !== -1) {
+      sg.snippets.splice(sIndex, 1);
+    }
+
+    if (target instanceof GroupTreeItem) {
+      tg.snippets = [source.snippet, ...tg.snippets];
+    } else {
+      const tIndex = tg.snippets.findIndex(s => s.name === target.snippet.name);
+      if (tIndex !== -1) {
+        tg.snippets.splice(tIndex + 1, 0, source.snippet);
+      }
+    }
+
+    if (!sameGroup) {
+      await writeSnippetFile(sg.filePath, sg.snippets);
+    }
+    await writeSnippetFile(tg.filePath, tg.snippets);
 
     await provider.refresh();
   }

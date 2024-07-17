@@ -1,5 +1,3 @@
-import type { CommentObject } from 'comment-json';
-
 export enum GroupType {
   language = 'language',
   global = 'global',
@@ -10,9 +8,8 @@ export interface Group {
   name: string;
   filePath: string;
   fileName: string;
-  snippets?: Snippet[];
-  json: CommentObject;
-  type?: GroupType;
+  snippets: Snippet[];
+  type: GroupType;
 }
 
 export interface Snippet {
