@@ -67,6 +67,8 @@ webview
 .lintstagedrc*
 .prettierrc*
 .prettierignore
+.stylelintignore
+.stylelintrc*
 pnpm-lock.yaml
 tsconfig.json
 tsconfig.*.json
