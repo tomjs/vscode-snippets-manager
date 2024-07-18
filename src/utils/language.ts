@@ -1,5 +1,5 @@
-import { i18n } from '@tomjs/vscode';
-import { languages, window } from 'vscode';
+import { getCtx, i18n } from '@tomjs/vscode';
+import { ExtensionMode, languages, window } from 'vscode';
 import type { LanguageItem } from '../types';
 import { getPropsFixedLanguages, getPropsScopeLanguages } from './configuration';
 import { getUsedLanguagesState } from './state';
@@ -10,6 +10,7 @@ export function getCurrentLanguage() {
 }
 
 const TS_GROUPS = ['typescript', 'javascript', 'typescriptreact', 'javascriptreact'];
+const REACT_GROUPS = ['typescriptreact', 'typescript', 'javascriptreact', 'javascript'];
 
 function getCurrentLanguages() {
   const lang = getCurrentLanguage();
@@ -32,13 +33,33 @@ export function getSnippetLanguage(scope?: string) {
     .map(s => s.trim())
     .filter(s => s);
 
-  for (const langId of TS_GROUPS) {
+  for (const langId of REACT_GROUPS) {
     if (langs.includes(langId)) {
-      return langId;
+      return fixSnippetLanguage(langId);
     }
   }
 
-  return langs[0];
+  return fixSnippetLanguage(langs[0]);
+}
+
+export function isUnderDevelopment() {
+  return getCtx().extensionMode === ExtensionMode.Development;
+}
+
+function fixSnippetLanguage(lang?: string) {
+  if (!lang) return;
+
+  if (isUnderDevelopment()) {
+    if (['vue', 'svg'].includes(lang)) {
+      return 'html';
+    }
+  } else {
+    if (['svg'].includes(lang)) {
+      return 'html';
+    }
+  }
+
+  return lang || undefined;
 }
 
 export function getLanguageTag(item: LanguageItem) {

@@ -19,7 +19,7 @@ import {
 import { getGroupIconPath, getGroups, searchGroupSnippets, writeSnippetFile } from './data';
 import type { Group, Snippet } from './types';
 import { GroupType } from './types';
-import { getIconsPath } from './utils';
+import { getIconsPath, getSnippetLanguage } from './utils';
 
 export class GroupTreeItem extends TreeItem {
   group: Group;
@@ -53,7 +53,18 @@ export class SnippetTreeItem extends TreeItem {
 
     this.contextValue = 'snippet';
     this.description = snippet.description;
-    this.tooltip = new MarkdownString(snippet.prefix).appendText(`\n${snippet.description || ''}`);
+
+    const md = new MarkdownString(snippet.prefix.replace(/,/g, ' | '));
+    if (snippet.scope) {
+      md.appendText(`\n${snippet.scope.replace(/,/g, ' | ')}`);
+    }
+    md.appendText(`\n${snippet.description || ''}`);
+    const language = getSnippetLanguage(
+      this.group.type === GroupType.language ? this.group.name : snippet.scope,
+    );
+    md.appendCodeblock(snippet.body.join('\n'), language);
+
+    this.tooltip = md;
 
     this.command = {
       command: 'tomjs.snippets.editSnippetBody',
@@ -157,9 +168,6 @@ class SnippetTreeDragAndDropController implements TreeDragAndDropController<Tree
     const transferItem = dataTransfer.get(MIMETYPE);
     const source: SnippetTreeItem = transferItem?.value;
     if (!source) return;
-
-    console.log('target:', target);
-    console.log('source:', source);
 
     const sg = source.group;
     const tg = target.group;

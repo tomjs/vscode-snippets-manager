@@ -15,7 +15,7 @@ export function showInfo(message: any, ...items: string[]) {
 
 export async function showPickYesOrNo(placeHolder: string) {
   const result = await window.showQuickPick([i18n.t('feedback.yes'), i18n.t('feedback.no')], {
-    placeHolder: placeHolder,
+    placeHolder,
   });
 
   if (result) {

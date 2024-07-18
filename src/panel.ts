@@ -71,6 +71,9 @@ class SnippetPanel {
     const { origin, ...snippet } = data || {};
     const { name } = snippet;
 
+    // @ts-ignore
+    snippet.body = typeof snippet.body === 'string' ? snippet.body.split('\n') : snippet.body;
+
     const snippets = group.snippets;
     const addOrUpdate = (name: string) => {
       const i = snippets.findIndex(s => s.name === name);

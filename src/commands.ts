@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { mkdirp, rm, writeFile } from '@tomjs/node';
 import { getAllWorkspaceFolders, getCtx, i18n } from '@tomjs/vscode';
+import cloneDeep from 'lodash/cloneDeep';
 import type { QuickPickItem, TextDocument } from 'vscode';
 import {
   commands,
@@ -54,6 +55,7 @@ export function registerCommands() {
     commands.registerCommand('tomjs.snippets.editSnippet', editSnippetCommand),
     commands.registerCommand('tomjs.snippets.editSnippetBody', editSnippetBodyCommand),
     commands.registerCommand('tomjs.snippets.deleteSnippet', deleteSnippetCommand),
+    commands.registerCommand('tomjs.snippets.copySnippet', copySnippetCommand),
   );
 
   workspace.onDidSaveTextDocument(onDidSaveTextDocument);
@@ -281,8 +283,9 @@ export const codeSnippetFileLower = fixFilePath(codeSnippetFile);
 async function openSnippetFile(group: Group, snippet: Snippet) {
   await mkdirp(codeSnippetDir);
 
-  const language =
-    group.type === GroupType.language ? group.name : getSnippetLanguage(snippet.scope);
+  const language = getSnippetLanguage(
+    group.type === GroupType.language ? group.name : snippet.scope,
+  );
 
   await updateCodeState({
     name: snippet.name,
@@ -301,7 +304,9 @@ async function openSnippetFile(group: Group, snippet: Snippet) {
     if (language) {
       await languages.setTextDocumentLanguage(editor.document, language);
     }
-  } catch {}
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 function closeSnippetFile() {
@@ -392,6 +397,25 @@ async function editSnippetCommand(treeItem?: SnippetTreeItem) {
   await openEditSnippetPanel(group, snippet);
 }
 
+async function copySnippetCommand(treeItem?: SnippetTreeItem) {
+  let { group, snippet } = treeItem || {};
+  if (!treeItem) {
+    group = await pickGroup();
+    if (!group) return;
+    snippet = await pickSnippet(group);
+  }
+  if (!group || !snippet) return;
+
+  const newSnippet = cloneDeep(snippet);
+  newSnippet.name = `${snippet.name}-${Date.now()}`;
+
+  group.snippets.push(newSnippet);
+
+  await writeSnippetFile(group.filePath, group.snippets);
+  showInfo(i18n.t('text.copy.success', snippet.name));
+  await provider.refresh(group.filePath);
+}
+
 /* #endregion */
 
 async function onDidSaveTextDocument(doc?: TextDocument) {
@@ -433,9 +457,7 @@ async function setCodeSnippetLanguage() {
     if (fixFilePath(doc.fileName) === codeSnippetFileLower) {
       try {
         await languages.setTextDocumentLanguage(doc, state.language);
-      } catch (e) {
-        console.error(e);
-      }
+      } catch {}
       break;
     }
   }

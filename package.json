@@ -107,6 +107,12 @@
         "title": "%tomjs.snippets.deleteSnippet%",
         "category": "%displayName%",
         "icon": "$(trash)"
+      },
+      {
+        "command": "tomjs.snippets.copySnippet",
+        "title": "%tomjs.snippets.copySnippet%",
+        "category": "%displayName%",
+        "icon": "$(files)"
       }
     ],
     "menus": {
@@ -148,6 +154,11 @@
           "command": "tomjs.snippets.deleteGroup",
           "when": "view == tomjsSnippetsManager && (viewItem == group || viewItem == scopeGroup)",
           "group": "inline@4"
+        },
+        {
+          "command": "tomjs.snippets.copySnippet",
+          "when": "view == tomjsSnippetsManager && viewItem == snippet",
+          "group": "inline@0"
         },
         {
           "command": "tomjs.snippets.editSnippet",
@@ -197,39 +208,39 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@tomjs/node": "^2.2.1",
-    "@tomjs/vscode": "^2.4.2",
-    "@tomjs/vscode-webview": "^1.0.3",
+    "@tomjs/node": "^2.2.3",
+    "@tomjs/vscode": "^2.5.0",
+    "@tomjs/vscode-webview": "^1.0.6",
     "@vscode/webview-ui-toolkit": "^1.4.0",
-    "comment-json": "^4.2.3",
+    "comment-json": "^4.2.4",
     "lodash": "^4.17.21",
-    "vee-validate": "^4.13.1",
-    "vue": "^3.4.31",
+    "vee-validate": "^4.13.2",
+    "vue": "^3.4.32",
     "vue-i18n": "^9.13.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@tomjs/commitlint": "^3.3.0",
-    "@tomjs/eslint": "^3.2.0",
+    "@tomjs/eslint": "^3.3.0",
     "@tomjs/prettier": "^1.4.1",
-    "@tomjs/stylelint": "^2.5.0",
-    "@tomjs/tsconfig": "^1.6.0",
-    "@tomjs/vite-plugin-vscode": "^2.5.3",
+    "@tomjs/stylelint": "^2.6.1",
+    "@tomjs/tsconfig": "^1.7.1",
+    "@tomjs/vite-plugin-vscode": "^2.5.5",
     "@tomjs/vscode-dev": "^3.0.2",
-    "@types/lodash": "^4.17.6",
-    "@types/node": "^18.19.39",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^18.19.40",
     "@types/vscode": "^1.56.0",
     "@vitejs/plugin-vue": "^5.0.5",
-    "@vscode/vsce": "^2.29.0",
+    "@vscode/vsce": "^2.31.0",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.3.2",
-    "rimraf": "^5.0.7",
-    "sass": "^1.77.6",
-    "stylelint": "^16.6.1",
+    "prettier": "^3.3.3",
+    "rimraf": "^5.0.9",
+    "sass": "^1.77.8",
+    "stylelint": "^16.7.0",
     "typescript": "~5.4.5",
-    "vite": "^5.3.2"
+    "vite": "^5.3.4"
   }
 }
