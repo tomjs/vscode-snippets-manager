@@ -1,3 +1,7 @@
+## [v2.6.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.5.1...v2.6.0) (2024-07-18)
+
+- feat: add copy snippet and fix some issues
+
 ## [v2.5.1](https://github.com/tomjs/vscode-snippets-manager/compare/v2.5.0...v2.5.1) (2024-07-18)
 
 - fix: snippet syntax highlight
