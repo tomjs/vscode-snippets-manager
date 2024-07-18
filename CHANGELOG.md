@@ -1,3 +1,8 @@
+## [v2.5.1](https://github.com/tomjs/vscode-snippets-manager/compare/v2.5.0...v2.5.1) (2024-07-18)
+
+- fix: snippet syntax highlight
+- fix: make the editor keep the webview context around
+
 ## [v2.5.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.4.0...v2.5.0) (2024-07-17)
 
 - feat: add the drag and sort of snippets
