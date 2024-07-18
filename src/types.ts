@@ -30,7 +30,7 @@ export interface LanguageItem {
 export interface CodeState {
   name: string;
   filePath: string;
-  language: string;
+  language?: string;
 }
 
 export interface PostDataSnippet extends Snippet {

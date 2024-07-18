@@ -24,7 +24,14 @@ function getCurrentLanguages() {
   return [lang];
 }
 
-export function getSnippetLanguage(langs: string[]) {
+export function getSnippetLanguage(scope?: string) {
+  if (!scope) return;
+
+  const langs = (scope || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(s => s);
+
   for (const langId of TS_GROUPS) {
     if (langs.includes(langId)) {
       return langId;

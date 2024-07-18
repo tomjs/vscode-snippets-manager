@@ -57,6 +57,8 @@ export function registerCommands() {
   );
 
   workspace.onDidSaveTextDocument(onDidSaveTextDocument);
+
+  setCodeSnippetLanguage();
 }
 
 async function pickGroup() {
@@ -279,7 +281,8 @@ export const codeSnippetFileLower = fixFilePath(codeSnippetFile);
 async function openSnippetFile(group: Group, snippet: Snippet) {
   await mkdirp(codeSnippetDir);
 
-  const language = Array.isArray(snippet.scope) ? getSnippetLanguage(snippet.scope) : group.name;
+  const language =
+    group.type === GroupType.language ? group.name : getSnippetLanguage(snippet.scope);
 
   await updateCodeState({
     name: snippet.name,
@@ -295,7 +298,9 @@ async function openSnippetFile(group: Group, snippet: Snippet) {
   await writeFile(codeSnippetFile, code);
   const editor = await window.showTextDocument(Uri.file(codeSnippetFile), { preview: true });
   try {
-    await languages.setTextDocumentLanguage(editor.document, language);
+    if (language) {
+      await languages.setTextDocumentLanguage(editor.document, language);
+    }
   } catch {}
 }
 
@@ -416,6 +421,22 @@ async function onDidSaveTextDocument(doc?: TextDocument) {
         await writeSnippetFile(group.filePath, group.snippets);
         showInfo(i18n.t('text.save.success', snippet.name));
       }
+    }
+  }
+}
+
+async function setCodeSnippetLanguage() {
+  // state
+  const state = getCodeState();
+  if (!state || !state.language) return;
+  for (const doc of workspace.textDocuments) {
+    if (fixFilePath(doc.fileName) === codeSnippetFileLower) {
+      try {
+        await languages.setTextDocumentLanguage(doc, state.language);
+      } catch (e) {
+        console.error(e);
+      }
+      break;
     }
   }
 }
