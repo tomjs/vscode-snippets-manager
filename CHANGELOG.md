@@ -1,3 +1,7 @@
+## [v2.6.2](https://github.com/tomjs/vscode-snippets-manager/compare/v2.6.1...v2.6.2) (2024-07-18)
+
+- fix: exclude resources/screenshots
+
 ## [v2.6.1](https://github.com/tomjs/vscode-snippets-manager/compare/v2.6.0...v2.6.1) (2024-07-18)
 
 - fix: exclude stylelint config file
