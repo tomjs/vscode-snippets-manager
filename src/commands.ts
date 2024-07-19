@@ -1,21 +1,11 @@
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { mkdirp, rm, writeFile } from '@tomjs/node';
 import { getAllWorkspaceFolders, getCtx, i18n } from '@tomjs/vscode';
 import cloneDeep from 'lodash/cloneDeep';
 import type { QuickPickItem, TextDocument } from 'vscode';
+import { commands, languages, QuickPickItemKind, Uri, window, workspace } from 'vscode';
 import {
-  commands,
-  languages,
-  QuickPickItemKind,
-  TabInputText,
-  Uri,
-  window,
-  workspace,
-} from 'vscode';
-import {
-  deleteSnippet,
   getGroupIconPath,
   getGroups,
   isLanguageGroup,
@@ -26,20 +16,21 @@ import {
 import { closeSnippetPanel, openSnippetPanel } from './panel';
 import type { GroupTreeItem, SnippetTreeItem } from './provider';
 import { provider } from './provider';
+import { closeSnippetFile, codeSnippetFileLower, fixFilePath, openSnippetFile } from './snippet';
 import type { Group, PostData, Snippet } from './types';
 import { GroupType } from './types';
 import {
   array2Text,
-  getCodeState,
+  getCodePageState,
+  getCodeSnippetState,
   getLanguages,
   getLanguageTag,
-  getSnippetLanguage,
   getUserSnippetsPath,
   showError,
   showInfo,
   showPickYesOrNo,
   text2Array,
-  updateCodeState,
+  updateCodePageState,
 } from './utils';
 
 export function registerCommands() {
@@ -262,6 +253,50 @@ async function refreshGroupCommand() {
 
 /* #region snippets */
 
+async function deleteSnippet(group: Group, snippetName: string, writeFile = true) {
+  const { snippets } = group;
+  const i = snippets.findIndex(s => s.name === snippetName);
+  if (i !== -1) {
+    snippets.splice(i, 1);
+  }
+
+  if (writeFile) {
+    await writeSnippetFile(group.filePath, snippets);
+  }
+
+  // close snippet file/panel
+  closeSnippetFileByState(group.filePath, snippetName);
+  closeSnippetPanelByState(group.filePath, snippetName);
+}
+
+function closeSnippetFileByState(filePath: string, snippetName?: string) {
+  const state = getCodeSnippetState();
+  if (!state) return;
+  if (state.filePath === filePath) {
+    if (snippetName) {
+      if (state.name === snippetName) {
+        closeSnippetFile();
+      }
+    } else {
+      closeSnippetFile();
+    }
+  }
+}
+
+function closeSnippetPanelByState(filePath: string, snippetName?: string) {
+  const state = getCodePageState();
+  if (!state) return;
+  if (state.filePath === filePath) {
+    if (snippetName) {
+      if (state.name === snippetName) {
+        closeSnippetPanel();
+      }
+    } else {
+      closeSnippetPanel();
+    }
+  }
+}
+
 async function pickSnippet(group: Group) {
   const items: (QuickPickItem & { snippet: Snippet })[] = (group.snippets || []).map(s => ({
     label: s.prefix,
@@ -274,53 +309,6 @@ async function pickSnippet(group: Group) {
   });
 
   if (pick) return pick.snippet;
-}
-
-const codeSnippetDir = path.join(os.homedir(), '.tomjs/vscode-snippets-manager');
-export const codeSnippetFile = path.join(codeSnippetDir, 'code.snippet');
-export const fixFilePath = (fileName: string) => fileName.toLocaleLowerCase();
-export const codeSnippetFileLower = fixFilePath(codeSnippetFile);
-async function openSnippetFile(group: Group, snippet: Snippet) {
-  await mkdirp(codeSnippetDir);
-
-  const language = getSnippetLanguage(
-    group.type === GroupType.language ? group.name : snippet.scope,
-  );
-
-  await updateCodeState({
-    name: snippet.name,
-    filePath: group.filePath,
-    language,
-  });
-
-  let code = '';
-  if (Array.isArray(snippet.body)) {
-    code = snippet.body.join('\n');
-  }
-
-  await writeFile(codeSnippetFile, code);
-  const editor = await window.showTextDocument(Uri.file(codeSnippetFile), { preview: true });
-  try {
-    if (language) {
-      await languages.setTextDocumentLanguage(editor.document, language);
-    }
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-function closeSnippetFile() {
-  for (const tabGroup of window.tabGroups.all) {
-    for (const tab of tabGroup.tabs) {
-      if (tab.input instanceof TabInputText) {
-        const fileName = tab.input.uri.fsPath;
-        if (fixFilePath(fileName) === codeSnippetFileLower) {
-          window.tabGroups.close(tab);
-          return;
-        }
-      }
-    }
-  }
 }
 
 async function addSnippetCommand(treeItem?: GroupTreeItem) {
@@ -369,6 +357,10 @@ async function deleteSnippetCommand(treeItem?: SnippetTreeItem) {
   if (!confirm) return;
 
   await deleteSnippet(group, snippet.name);
+
+  closeSnippetFileByState(group.filePath, snippet.name);
+  closeSnippetPanelByState(group.filePath, snippet.name);
+
   showInfo(i18n.t('text.delete.success', snippet.name));
   await provider.refresh(group.filePath);
 }
@@ -383,6 +375,8 @@ export async function openEditSnippetPanel(group: Group, snippet: Snippet) {
     languages,
     names: group.snippets?.map(s => s.name) || [],
   });
+
+  await updateCodePageState({ filePath: group.filePath, name: snippet.name });
 }
 
 async function editSnippetCommand(treeItem?: SnippetTreeItem) {
@@ -394,6 +388,7 @@ async function editSnippetCommand(treeItem?: SnippetTreeItem) {
   }
   if (!group || !snippet) return;
 
+  closeSnippetFileByState(group.filePath, snippet.name);
   await openEditSnippetPanel(group, snippet);
 }
 
@@ -431,7 +426,7 @@ async function onDidSaveTextDocument(doc?: TextDocument) {
       return;
     }
     // state
-    const state = getCodeState();
+    const state = getCodeSnippetState();
     if (!state) return;
 
     const groupPath = fixFilePath(state.filePath);
@@ -451,7 +446,7 @@ async function onDidSaveTextDocument(doc?: TextDocument) {
 
 async function setCodeSnippetLanguage() {
   // state
-  const state = getCodeState();
+  const state = getCodeSnippetState();
   if (!state || !state.language) return;
   for (const doc of workspace.textDocuments) {
     if (fixFilePath(doc.fileName) === codeSnippetFileLower) {

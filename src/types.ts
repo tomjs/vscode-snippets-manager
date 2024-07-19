@@ -27,9 +27,18 @@ export interface LanguageItem {
   used?: boolean;
 }
 
-export interface CodeState {
+export interface CodeSnippetState {
+  /**
+   * snippet name
+   */
   name: string;
+  /**
+   * group file path
+   */
   filePath: string;
+  /**
+   * snippet language
+   */
   language?: string;
 }
 

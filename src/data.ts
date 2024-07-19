@@ -106,34 +106,6 @@ export async function writeSnippetFile(filePath: string, snippets: Snippet[]) {
   await writeFile(filePath, JSON.stringify(json, null, 2));
 }
 
-export async function addOrUpdateSnippet(group: Group, snippet: Snippet, writeFile = true) {
-  const { name } = snippet;
-  const snippets = group.snippets || [];
-  const index = snippets.findIndex(s => s.name === name);
-
-  if (index !== -1) {
-    snippets[index] = snippet;
-  } else {
-    snippets.push(snippet);
-  }
-
-  if (writeFile) {
-    await writeSnippetFile(group.filePath, snippets);
-  }
-}
-
-export async function deleteSnippet(group: Group, snippetName: string, writeFile = true) {
-  const { snippets } = group;
-  const i = snippets.findIndex(s => s.name === snippetName);
-  if (i !== -1) {
-    snippets.splice(i, 1);
-  }
-
-  if (writeFile) {
-    await writeSnippetFile(group.filePath, snippets);
-  }
-}
-
 /**
  * Search all snippet files or specified snippet file
  * @param snippetFilePath snippet file path, if not specified, search all snippet files
