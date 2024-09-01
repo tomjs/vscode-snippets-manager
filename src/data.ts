@@ -127,7 +127,7 @@ export async function searchGroupSnippets(snippetFilePath?: string) {
   const userDir = getUserSnippetsPath();
   const list = getFileNames(userDir);
 
-  const searchGroups = [getSnippetGroups(userDir, list, SUFFIX_CODE_SNIPPETS, GroupType.global)];
+  const searchGroups: Promise<Group[]>[] = [];
 
   getAllWorkspaceFolders().forEach(workspaceDir => {
     const dir = path.join(workspaceDir.uri.fsPath, '.vscode');
@@ -137,6 +137,8 @@ export async function searchGroupSnippets(snippetFilePath?: string) {
       );
     }
   });
+
+  searchGroups.push(getSnippetGroups(userDir, list, SUFFIX_CODE_SNIPPETS, GroupType.global));
   searchGroups.push(getSnippetGroups(userDir, list, SUFFIX_JSON, GroupType.language));
 
   const values = await Promise.all(searchGroups);
