@@ -1,3 +1,7 @@
+## [v2.7.0](https://github.com/tomjs/vscode-snippets-manager/compare/v2.6.3...v2.7.0) (2024-11-27)
+
+- feat: optimize snippet edit
+
 ## [v2.6.3](https://github.com/tomjs/vscode-snippets-manager/compare/v2.6.2...v2.6.3) (2024-07-18)
 
 - feat: optimize webview and document
