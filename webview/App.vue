@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { vscodeWebview } from '@tomjs/vscode-webview';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'es-toolkit';
 import { useForm } from 'vee-validate';
 import { ref } from 'vue';
 import { Checkbox, Input, TextArea } from './components';
 import { i18n } from './core';
 import { checkMin, checkRequired, required } from './utils/rules';
+import { webviewApi } from './utils/vscode';
 
 interface FormState {
   name: string;
@@ -52,8 +52,6 @@ function getScope(scope?: string | string[]) {
   }
 }
 
-console.log(navigator.language, navigator.languages);
-
 const { handleSubmit } = useForm({
   validationSchema: {
     name: (value: any) => {
@@ -82,7 +80,7 @@ const { handleSubmit } = useForm({
   },
 });
 
-vscodeWebview.on<{ snippet: FormState; languages: CodeLanguage[]; names: string[] }>(
+webviewApi.on<{ snippet: FormState; languages: CodeLanguage[]; names: string[] }>(
   'snippet',
   data => {
     const res = data || {};
@@ -103,9 +101,10 @@ vscodeWebview.on<{ snippet: FormState; languages: CodeLanguage[]; names: string[
   },
 );
 
+webviewApi.post('get', undefined);
+
 const onSubmit = handleSubmit.withControlled(values => {
-  console.log('values:', values);
-  vscodeWebview.postMessage('save', {
+  webviewApi.post('save', {
     ...formStateCache,
     ...values,
     scope: Array.isArray(values.scope) ? values.scope.join(',') : undefined,

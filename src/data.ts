@@ -4,13 +4,11 @@ import { readFile, writeFile } from '@tomjs/node';
 import { getAllWorkspaceFolders } from '@tomjs/vscode';
 import type { CommentObject } from 'comment-json';
 import jsonc from 'comment-json';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'es-toolkit';
+import { SUFFIX_CODE_SNIPPETS, SUFFIX_JSON } from './constant';
 import type { Group, Snippet } from './types';
 import { GroupType } from './types';
-import { getIconsPath, getUserSnippetsPath, text2Array } from './utils';
-
-export const SUFFIX_JSON = '.json';
-export const SUFFIX_CODE_SNIPPETS = '.code-snippets';
+import { getIconsPath, getUserSnippetsPath, shortId, text2Array } from './utils';
 
 let _groups: Group[] = [];
 
@@ -25,7 +23,12 @@ function getFileNames(dirPath: string) {
     .map(s => s.name);
 }
 
-function getSnippetGroups(dirPath: string, names: string[], suffix: string, type: GroupType) {
+function getSnippetGroups(
+  dirPath: string,
+  names: string[],
+  suffix: string,
+  type: GroupType,
+): Promise<Group[]> {
   if (names.length == 0) {
     return Promise.resolve([]);
   }
@@ -38,12 +41,13 @@ function getSnippetGroups(dirPath: string, names: string[], suffix: string, type
         const snippets = await readSnippetFile(filePath);
 
         return {
+          id: shortId(name),
           name,
           fileName,
           filePath,
           type,
           snippets,
-        } as Group;
+        };
       }),
   );
 }
@@ -59,7 +63,7 @@ async function readSnippetFile(filePath: string) {
     const json = jsonc.parse(text, undefined, true) as CommentObject;
     return Object.keys(json).map(key => {
       // @ts-ignore
-      const value = Object.assign({ name: key }, json[key]) as Snippet;
+      const value = Object.assign({ name: key, id: shortId(key) }, json[key]) as Snippet;
       return Object.assign(value, {
         body: text2Array(value.body),
         // @ts-ignore

@@ -54,11 +54,18 @@ export class SnippetTreeItem extends TreeItem {
     this.contextValue = 'snippet';
     this.description = snippet.description;
 
-    const md = new MarkdownString(snippet.prefix.replace(/,/g, ' | '));
+    const md = new MarkdownString();
+    md.supportHtml = true;
+
+    md.appendMarkdown(`<span style="color:#1890ff;">${snippet.prefix.replace(/,/g, ' | ')}</span>`);
     if (snippet.scope) {
-      md.appendText(`\n${snippet.scope.replace(/,/g, ' | ')}`);
+      md.appendMarkdown(
+        `  <span style="color:#faad14;">${snippet.scope.replace(/,/g, ' | ')}</span>`,
+      );
     }
-    md.appendText(`\n${snippet.description || ''}`);
+
+    md.appendText(`\n`);
+    md.appendMarkdown(`*${snippet.description || ''}*`);
     const language = getSnippetLanguage(
       this.group.type === GroupType.language ? this.group.name : snippet.scope,
     );

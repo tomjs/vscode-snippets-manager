@@ -6,7 +6,7 @@ import { openEditSnippetPanel } from './commands';
 import { getGroups, writeSnippetFile } from './data';
 import { provider } from './provider';
 import type { PostDataSnippet } from './types';
-import { showError, showInfo } from './utils';
+import { getCodePagePostData, shortId, showError, showInfo } from './utils';
 
 class SnippetPanel {
   panel: WebviewPanel;
@@ -76,6 +76,7 @@ class SnippetPanel {
 
     const snippets = group.snippets;
     const addOrUpdate = (name: string) => {
+      snippet.id = shortId(name);
       const i = snippets.findIndex(s => s.name === name);
       if (i !== -1) {
         snippets[i] = snippet;
@@ -104,9 +105,16 @@ class SnippetPanel {
       async (message: any) => {
         const type = message.type;
         const data = message.data;
-        // console.log(`type:`, type, data);
-        if (type === 'save') {
-          this.addOrUpdateSnippet(data);
+
+        switch (type) {
+          case 'get': {
+            this.postMessage('snippet', getCodePagePostData());
+            break;
+          }
+          case 'save': {
+            this.addOrUpdateSnippet(data);
+            break;
+          }
         }
       },
       undefined,

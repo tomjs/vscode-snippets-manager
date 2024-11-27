@@ -1,8 +1,8 @@
 import crypto from 'node:crypto';
 import { env, window } from 'vscode';
 
-export function md5(str: string) {
-  return crypto.createHash('md5').update(str).digest('hex');
+export function shortId(str: string): string {
+  return crypto.createHash('md5').update(str).digest('hex').substring(0, 8);
 }
 
 export function array2Text(text?: any): string {

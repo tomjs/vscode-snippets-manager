@@ -5,6 +5,7 @@ export enum GroupType {
 }
 
 export interface Group {
+  id: string;
   name: string;
   filePath: string;
   fileName: string;
@@ -13,6 +14,7 @@ export interface Group {
 }
 
 export interface Snippet {
+  id: string;
   name: string;
   scope?: string;
   prefix: string;
@@ -31,15 +33,11 @@ export interface CodeSnippetState {
   /**
    * snippet name
    */
-  name: string;
-  /**
-   * group file path
-   */
-  filePath: string;
+  groupId: string;
   /**
    * snippet language
    */
-  language?: string;
+  snippetId?: string;
 }
 
 export interface PostDataSnippet extends Snippet {

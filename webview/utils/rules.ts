@@ -1,19 +1,6 @@
-import isEmpty from 'lodash/isEmpty';
-import isNil from 'lodash/isNil';
-import isString from 'lodash/isString';
+import { isNil, isString } from 'es-toolkit';
+import { isEmpty } from 'es-toolkit/compat';
 import { i18n } from '../core';
-
-// export function isEmpty(value: any): boolean {
-//   if (value === null || value === undefined || value === '') {
-//     return true;
-//   }
-
-//   if (Array.isArray(value) && value.length === 0) {
-//     return true;
-//   }
-
-//   return false;
-// }
 
 export function checkRequired(value: any) {
   return isNil(value) || isEmpty(isString(value) ? value.trim() : value) || value === false;

@@ -15,17 +15,17 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0(@types/vscode@1.90.0)
       '@tomjs/vscode-webview':
-        specifier: ^1.0.6
-        version: 1.0.6
+        specifier: ^2.0.2
+        version: 2.0.2
       '@vscode/webview-ui-toolkit':
         specifier: ^1.4.0
         version: 1.4.0(react@18.3.1)
       comment-json:
-        specifier: ^4.2.4
-        version: 4.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.2.5
+        version: 4.2.5
+      es-toolkit:
+        specifier: ^1.27.0
+        version: 1.27.0
       vee-validate:
         specifier: ^4.13.2
         version: 4.13.2(vue@3.4.32(typescript@5.4.5))
@@ -55,14 +55,11 @@ importers:
         specifier: ^1.7.1
         version: 1.7.1
       '@tomjs/vite-plugin-vscode':
-        specifier: ^2.5.5
-        version: 2.5.5(postcss@8.4.39)(typescript@5.4.5)(vite@5.3.4(@types/node@18.19.40)(sass@1.77.8))
+        specifier: ^3.1.1
+        version: 3.1.1(postcss@8.4.39)(typescript@5.4.5)(vite@5.3.4(@types/node@18.19.40)(sass@1.77.8))
       '@tomjs/vscode-dev':
         specifier: ^3.0.2
         version: 3.0.2(prettier@3.3.3)(typescript@5.4.5)
-      '@types/lodash':
-        specifier: ^4.17.7
-        version: 4.17.7
       '@types/node':
         specifier: ^18.19.40
         version: 18.19.40
@@ -779,8 +776,8 @@ packages:
     resolution: {integrity: sha512-V0CCF54oReJwSjaEjNDtK9BhyDntWGtW3NcBLjh4Cd9lO3fe0nmEI8lfXHhhTEtnf4i5YmHPjRBEiI/FMiokVw==}
     engines: {node: '>=16'}
 
-  '@tomjs/vite-plugin-vscode@2.5.5':
-    resolution: {integrity: sha512-GGQ9LQgxbSiqvA9WA6RefoN5yqNa8KEsLqsVHDnQIeNuxlMOJN+moFbcTz6fgt/a05QRCwSykc4AfozPFULfKg==}
+  '@tomjs/vite-plugin-vscode@3.1.1':
+    resolution: {integrity: sha512-mFBzwH1gmX7MyvwkeQMPfGS6uNWNkkOe3yHsl8YHXABNxEavwDVpcjxMtZdohPGIWidovnlqKKhWmrfht3LSzQ==}
     engines: {node: '>=16'}
     peerDependencies:
       vite: '>=2'
@@ -795,8 +792,8 @@ packages:
       prettier:
         optional: true
 
-  '@tomjs/vscode-webview@1.0.6':
-    resolution: {integrity: sha512-bwyffCy6P6dH6ntjvHXMc5nN/I5Fn2cqJyt4EHDmVFm04wF4I0VXiHGTLGafr++Q5WUfOM9auBIaYCtlhvv72g==}
+  '@tomjs/vscode-webview@2.0.2':
+    resolution: {integrity: sha512-5YXYjOfSSKxRuVZGkGHG6svJFtqYXXSZDUlnkmRr6fLwhkRarsvx83wLK8drwA3gpkVECqjmEXWuObEJ+h4tPw==}
     engines: {node: '>=16'}
 
   '@tomjs/vscode@2.5.0':
@@ -813,9 +810,6 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
-
-  '@types/lodash@4.17.7':
-    resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
   '@types/node@18.19.40':
     resolution: {integrity: sha512-MIxieZHrm4Ee8XArBIc+Or9HINt2StOmCbgRcXGSJl8q14svRvkZPe7LJq9HKtTI1SK3wU8b91TjntUm7T69Pg==}
@@ -1231,8 +1225,8 @@ packages:
     resolution: {integrity: sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==}
     engines: {node: '>= 6'}
 
-  comment-json@4.2.4:
-    resolution: {integrity: sha512-E5AjpSW+O+N5T2GsOQMHLLsJvrYw6G/AFt9GvU6NguEAfzKShh7hRiLtVo6S9KbRpFMGqE5ojo0/hE+sdteWvQ==}
+  comment-json@4.2.5:
+    resolution: {integrity: sha512-bKw/r35jR3HGt5PEPm1ljsQQGyCrR8sFGNiN5L+ykDHdpO8Smxkrkla9Yi6NkQyUrb8V54PGhfMs6NrIwtxtdw==}
     engines: {node: '>= 6'}
 
   compare-func@2.0.0:
@@ -1470,6 +1464,9 @@ packages:
   es-to-primitive@1.2.1:
     resolution: {integrity: sha512-QCOllgZJtaUo9miYBcLChTUaHNjJF3PYs1VidD7AwiEj1kYxKeQTctLAezAOH5ZKRH0g2IgPn6KwB4IT8iRpvA==}
     engines: {node: '>= 0.4'}
+
+  es-toolkit@1.27.0:
+    resolution: {integrity: sha512-ETSFA+ZJArcuSCpzD2TjAy6UHpx4E4uqFsoDg9F/nTLogrLmVVZQ+zNxco5h7cWnA1nNak07IXsLcaSMih+ZPQ==}
 
   esbuild@0.18.20:
     resolution: {integrity: sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA==}
@@ -4035,7 +4032,7 @@ snapshots:
 
   '@tomjs/tsconfig@1.7.1': {}
 
-  '@tomjs/vite-plugin-vscode@2.5.5(postcss@8.4.39)(typescript@5.4.5)(vite@5.3.4(@types/node@18.19.40)(sass@1.77.8))':
+  '@tomjs/vite-plugin-vscode@3.1.1(postcss@8.4.39)(typescript@5.4.5)(vite@5.3.4(@types/node@18.19.40)(sass@1.77.8))':
     dependencies:
       '@tomjs/node': 2.2.3
       dayjs: 1.11.11
@@ -4066,7 +4063,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@tomjs/vscode-webview@1.0.6': {}
+  '@tomjs/vscode-webview@2.0.2': {}
 
   '@tomjs/vscode@2.5.0(@types/vscode@1.90.0)':
     dependencies:
@@ -4081,8 +4078,6 @@ snapshots:
   '@types/estree@1.0.5': {}
 
   '@types/json5@0.0.29': {}
-
-  '@types/lodash@4.17.7': {}
 
   '@types/node@18.19.40':
     dependencies:
@@ -4607,7 +4602,7 @@ snapshots:
 
   commander@6.2.1: {}
 
-  comment-json@4.2.4:
+  comment-json@4.2.5:
     dependencies:
       array-timsort: 1.0.3
       core-util-is: 1.0.3
@@ -4908,6 +4903,8 @@ snapshots:
       is-callable: 1.2.7
       is-date-object: 1.0.5
       is-symbol: 1.0.4
+
+  es-toolkit@1.27.0: {}
 
   esbuild@0.18.20:
     optionalDependencies:
