@@ -395,15 +395,16 @@ async function copySnippetCommand(treeItem?: SnippetTreeItem) {
 async function onDidSaveTextDocument(doc?: TextDocument) {
   if (!doc) return;
 
-  const fileName = doc.fileName.toLocaleLowerCase();
+  const filePath = doc.fileName.toLocaleLowerCase();
   const groups = getGroups();
-  if (groups.find(g => fixFilePath(g.filePath) === fileName)) {
-    showInfo(i18n.t('text.save.success', fileName));
+  if (groups.find(g => fixFilePath(g.filePath) === filePath)) {
+    showInfo(i18n.t('text.save.success', filePath));
     provider.refresh();
   } else {
-    if (!isCodeSnippetDir(fileName)) {
+    if (!isCodeSnippetDir(filePath)) {
       return;
     }
+    const fileName = path.basename(filePath);
     const [groupId, snippetId] = fileName.split('.');
     const group = getGroups().find(g => g.id === groupId);
     if (!group || !Array.isArray(group.snippets)) return;
