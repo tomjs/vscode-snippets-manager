@@ -381,6 +381,7 @@ async function copySnippetCommand(treeItem?: SnippetTreeItem) {
   if (!group || !snippet) return;
 
   const newSnippet = cloneDeep(snippet);
+  newSnippet.id = shortId(Date.now().toString());
   newSnippet.name = `${snippet.name}-${Date.now()}`;
 
   group.snippets.push(newSnippet);
