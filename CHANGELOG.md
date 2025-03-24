@@ -1,4 +1,4 @@
-## [v2.7.1](https://github.com/tomjs/vscode-snippets-manager/compare/v2.7.1..v2.7.2) (2025-03-24)
+## [v2.7.2](https://github.com/tomjs/vscode-snippets-manager/compare/v2.7.1..v2.7.2) (2025-03-24)
 
 - fix: clone snippet need new id
 
