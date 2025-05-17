@@ -1,5 +1,5 @@
 {
   "extends": "@tomjs/tsconfig/vue.json",
-  "include": ["webview"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "include": ["webview"]
 }

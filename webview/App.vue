@@ -44,9 +44,9 @@ let formStateCache: FormState = {
 function getScope(scope?: string | string[]) {
   if (scope) {
     if (typeof scope === 'string') {
-      // @ts-ignore
       return scope.split(',').map(s => s.trim());
-    } else if (Array.isArray(scope)) {
+    }
+    else if (Array.isArray(scope)) {
       return scope.map(s => s.trim());
     }
   }
@@ -62,7 +62,8 @@ const { handleSubmit } = useForm({
         if (formStateCache.name !== value && names.value.includes(value)) {
           return i18n.t('rules.exist', [value]);
         }
-      } else if (names.value.includes(value)) {
+      }
+      else if (names.value.includes(value)) {
         return i18n.t('rules.exist', [value]);
       }
       return true;
@@ -82,7 +83,7 @@ const { handleSubmit } = useForm({
 
 webviewApi.on<{ snippet: FormState; languages: CodeLanguage[]; names: string[] }>(
   'snippet',
-  data => {
+  (data) => {
     const res = data || {};
 
     const { scope, body, ...rest } = res.snippet || {};
@@ -103,7 +104,7 @@ webviewApi.on<{ snippet: FormState; languages: CodeLanguage[]; names: string[] }
 
 webviewApi.post('get', undefined);
 
-const onSubmit = handleSubmit.withControlled(values => {
+const onSubmit = handleSubmit.withControlled((values) => {
   webviewApi.post('save', {
     ...formStateCache,
     ...values,
@@ -112,16 +113,20 @@ const onSubmit = handleSubmit.withControlled(values => {
   });
 });
 
-const onRest = () => {
+function onRest() {
   formData.value = cloneDeep(formStateCache);
-};
+}
 </script>
 
 <template>
   <form @submit="onSubmit">
     <div class="form-item" style="margin-bottom: 16px">
-      <vscode-button type="submit">{{ $t('save') }}</vscode-button>
-      <vscode-button style="margin-left: 8px" @click="onRest">{{ $t('reset') }}</vscode-button>
+      <vscode-button type="submit">
+        {{ $t('save') }}
+      </vscode-button>
+      <vscode-button style="margin-left: 8px" @click="onRest">
+        {{ $t('reset') }}
+      </vscode-button>
     </div>
     <div class="form-item form-item-flex">
       <div style="width: 250px">

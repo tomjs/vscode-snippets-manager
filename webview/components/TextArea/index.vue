@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import { type RuleExpression, useField } from 'vee-validate';
-import { type MaybeRef, ref, watch } from 'vue';
+import type { RuleExpression } from 'vee-validate';
+import type { MaybeRef } from 'vue';
+import { useField } from 'vee-validate';
+import { ref, watch } from 'vue';
 
 defineOptions({
   name: 'VsTextArea',
@@ -34,21 +36,21 @@ const _value = ref(props.value);
 
 watch(
   () => props.value,
-  value => {
+  (value) => {
     _value.value = value;
     setValue(value || '');
   },
 );
 
-const onChange = (e: InputEvent) => {
+function onChange(e: InputEvent) {
   _value.value = (e.target as HTMLInputElement).value;
   setValue(_value.value);
   emit('update:value', _value.value);
-};
+}
 </script>
 
 <template>
-  <div class="component-wrapper" :class="{ 'has-error': !!errorMessage, success: meta.valid }">
+  <div class="component-wrapper" :class="{ 'has-error': !!errorMessage, 'success': meta.valid }">
     <label :for="name">{{ label }}</label>
     <vscode-text-area v-bind="props" :value="_value" @input="onChange" @blur="handleBlur" />
     <p v-show="errorMessage || meta.valid" class="help-message">
@@ -58,5 +60,5 @@ const onChange = (e: InputEvent) => {
 </template>
 
 <style lang="scss" scoped>
-@import '../style.scss';
+@import '../style';
 </style>

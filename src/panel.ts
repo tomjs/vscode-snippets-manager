@@ -1,11 +1,11 @@
-import { getCtx, i18n } from '@tomjs/vscode';
-import fs from 'fs';
 import type { Disposable, Webview, WebviewPanel } from 'vscode';
+import type { PostDataSnippet } from './types';
+import fs from 'node:fs';
+import { getCtx, i18n } from '@tomjs/vscode';
 import { ViewColumn, window } from 'vscode';
 import { openEditSnippetPanel } from './commands';
 import { getGroups, writeSnippetFile } from './data';
 import { provider } from './provider';
-import type { PostDataSnippet } from './types';
 import { getCodePagePostData, shortId, showError, showInfo } from './utils';
 
 class SnippetPanel {
@@ -51,7 +51,8 @@ class SnippetPanel {
 
     while (this.disposables.length) {
       const disposable = this.disposables.pop();
-      if (disposable) disposable.dispose();
+      if (disposable)
+        disposable.dispose();
     }
   }
 
@@ -62,7 +63,7 @@ class SnippetPanel {
       return;
     }
 
-    const group = getGroups().find(s => s.filePath == filePath);
+    const group = getGroups().find(s => s.filePath === filePath);
     if (!group) {
       showError(i18n.t('text.addSnippet.notFound'));
       return;
@@ -71,8 +72,7 @@ class SnippetPanel {
     const { origin, ...snippet } = data || {};
     const { name } = snippet;
 
-    // @ts-ignore
-    snippet.body = typeof snippet.body === 'string' ? snippet.body.split('\n') : snippet.body;
+    snippet.body = Array.isArray(snippet.body) ? snippet.body : (snippet.body as string || '').split('\n');
 
     const snippets = group.snippets;
     const addOrUpdate = (name: string) => {
@@ -80,14 +80,16 @@ class SnippetPanel {
       const i = snippets.findIndex(s => s.name === name);
       if (i !== -1) {
         snippets[i] = snippet;
-      } else {
+      }
+      else {
         snippets.push(snippet);
       }
     };
 
     if (origin) {
       addOrUpdate(origin !== name ? origin : name);
-    } else {
+    }
+    else {
       snippets.push(snippet);
     }
     await writeSnippetFile(group.filePath, snippets);
@@ -127,7 +129,8 @@ let snippetPanel: SnippetPanel;
 export function openSnippetPanel(title: string) {
   if (!snippetPanel || snippetPanel.disposed) {
     snippetPanel = new SnippetPanel();
-  } else {
+  }
+  else {
     snippetPanel.render();
   }
   snippetPanel.panel.title = title || 'Snippet';

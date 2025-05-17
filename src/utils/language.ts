@@ -1,12 +1,13 @@
+import type { LanguageItem } from '../types';
 import { getCtx, i18n } from '@tomjs/vscode';
 import { ExtensionMode, languages, window } from 'vscode';
-import type { LanguageItem } from '../types';
 import { getPropsFixedLanguages, getPropsScopeLanguages } from './configuration';
 import { getUsedLanguagesState } from './state';
 
 export function getCurrentLanguage() {
   const editor = window.activeTextEditor;
-  if (editor) return editor.document.languageId;
+  if (editor)
+    return editor.document.languageId;
 }
 
 const TS_GROUPS = ['typescript', 'javascript', 'typescriptreact', 'javascriptreact'];
@@ -26,7 +27,8 @@ function getCurrentLanguages() {
 }
 
 export function getSnippetLanguage(scope?: string) {
-  if (!scope) return;
+  if (!scope)
+    return;
 
   const langs = (scope || '')
     .split(',')
@@ -47,13 +49,15 @@ export function isUnderDevelopment() {
 }
 
 function fixSnippetLanguage(lang?: string) {
-  if (!lang) return;
+  if (!lang)
+    return;
 
   if (isUnderDevelopment()) {
     if (['vue', 'svg'].includes(lang)) {
       return 'html';
     }
-  } else {
+  }
+  else {
     if (['svg'].includes(lang)) {
       return 'html';
     }
@@ -94,8 +98,8 @@ export async function getLanguages(selectedLanguages?: string[], showScopeLangua
 
   let selectedLangs = Array.isArray(selectedLanguages) ? selectedLanguages : [];
   if (
-    selectedLangs.length &&
-    selectedLangs.find(s => ['javascript', 'typescript'].find(l => s.startsWith(l)))
+    selectedLangs.length
+    && selectedLangs.find(s => ['javascript', 'typescript'].find(l => s.startsWith(l)))
   ) {
     selectedLangs = TS_GROUPS;
   }
@@ -105,14 +109,15 @@ export async function getLanguages(selectedLanguages?: string[], showScopeLangua
   const firstLangs: string[] = [
     ...new Set([...selectedLangs, ...currentLangs, ...propsLangs, ...usedLangs]),
   ];
-  firstLangs.forEach(lang => {
+  firstLangs.forEach((lang) => {
     set.delete(lang);
   });
 
   langs = Array.from(set);
   langs.sort();
 
-  if (firstLangs.length) langs.unshift(...firstLangs);
+  if (firstLangs.length)
+    langs.unshift(...firstLangs);
 
   return langs.map((s): LanguageItem => {
     return {

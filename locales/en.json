@@ -6,7 +6,7 @@
   "feedback.confirm": "Confirm",
   "feedback.no": "No",
   "feedback.yes": "Yes",
-  "properties.fixedLanguages": "Optional languages ​​for snippets to be displayed first",
+  "properties.fixedLanguages": "Optional languages for snippets to be displayed first",
   "properties.scopeLanguages": "Optional languages for the scope attribute of the snippets. If not configured, it will be all supported languages.",
   "result.fail": "\"{0}\" failed",
   "result.ok": "\"{0}\" successful",

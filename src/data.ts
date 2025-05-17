@@ -1,12 +1,12 @@
+import type { CommentObject } from 'comment-json';
+import type { Group, Snippet } from './types';
 import fs from 'node:fs';
 import path from 'node:path';
 import { readFile, writeFile } from '@tomjs/node';
 import { getAllWorkspaceFolders } from '@tomjs/vscode';
-import type { CommentObject } from 'comment-json';
 import jsonc from 'comment-json';
 import { cloneDeep } from 'es-toolkit';
 import { SUFFIX_CODE_SNIPPETS, SUFFIX_JSON } from './constant';
-import type { Group, Snippet } from './types';
 import { GroupType } from './types';
 import { getIconsPath, getUserSnippetsPath, shortId, text2Array } from './utils';
 
@@ -29,13 +29,13 @@ function getSnippetGroups(
   suffix: string,
   type: GroupType,
 ): Promise<Group[]> {
-  if (names.length == 0) {
+  if (names.length === 0) {
     return Promise.resolve([]);
   }
   return Promise.all(
     names
       .filter(s => s.endsWith(suffix))
-      .map(async fileName => {
+      .map(async (fileName) => {
         const name = getGroupName(fileName, suffix);
         const filePath = path.join(dirPath, fileName);
         const snippets = await readSnippetFile(filePath);
@@ -61,16 +61,15 @@ async function readSnippetFile(filePath: string) {
 
   try {
     const json = jsonc.parse(text, undefined, true) as CommentObject;
-    return Object.keys(json).map(key => {
-      // @ts-ignore
-      const value = Object.assign({ name: key, id: shortId(key) }, json[key]) as Snippet;
+    return Object.keys(json).map((key) => {
+      const value = Object.assign({ name: key, id: shortId(key) } as any, json[key]) as Snippet;
       return Object.assign(value, {
         body: text2Array(value.body),
-        // @ts-ignore
-        prefix: typeof value.prefix !== 'string' ? value.prefix.join(',') : value.prefix,
+        prefix: Array.isArray(value.prefix) ? value.prefix.join(',') : (value.prefix || ''),
       }) as Snippet;
     });
-  } catch (e) {
+  }
+  catch (e) {
     console.error(e);
   }
 
@@ -79,9 +78,10 @@ async function readSnippetFile(filePath: string) {
 
 export async function writeSnippetFile(filePath: string, snippets: Snippet[]) {
   const json: Record<string, any> = {};
-  cloneDeep(snippets).forEach(snippet => {
+  cloneDeep(snippets).forEach((snippet) => {
     const { name, scope, body, description } = snippet;
-    let prefix = snippet.prefix;
+    const prefix = snippet.prefix;
+    let _prefix: string | string[] = prefix;
     if (prefix) {
       const prefixArr = [
         ...new Set(
@@ -92,16 +92,16 @@ export async function writeSnippetFile(filePath: string, snippets: Snippet[]) {
         ),
       ];
       if (prefixArr.length > 1) {
-        // @ts-ignore
-        prefix = prefixArr;
-      } else {
-        prefix = prefixArr.join('');
+        _prefix = prefixArr;
+      }
+      else {
+        _prefix = prefixArr.join('');
       }
     }
 
     json[name] = {
       scope: scope || undefined,
-      prefix,
+      prefix: _prefix,
       body,
       description,
     };
@@ -113,7 +113,6 @@ export async function writeSnippetFile(filePath: string, snippets: Snippet[]) {
 /**
  * Search all snippet files or specified snippet file
  * @param snippetFilePath snippet file path, if not specified, search all snippet files
- * @returns
  */
 export async function searchGroupSnippets(snippetFilePath?: string) {
   if (snippetFilePath) {
@@ -133,7 +132,7 @@ export async function searchGroupSnippets(snippetFilePath?: string) {
 
   const searchGroups: Promise<Group[]>[] = [];
 
-  getAllWorkspaceFolders().forEach(workspaceDir => {
+  getAllWorkspaceFolders().forEach((workspaceDir) => {
     const dir = path.join(workspaceDir.uri.fsPath, '.vscode');
     if (fs.existsSync(dir)) {
       searchGroups.push(

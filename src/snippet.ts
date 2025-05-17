@@ -1,10 +1,10 @@
+import type { Group, Snippet } from './types';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { mkdirp, writeFile } from '@tomjs/node';
 import { languages, TabInputText, Uri, window } from 'vscode';
-import type { Group, Snippet } from './types';
 import { GroupType } from './types';
 import { getSnippetLanguage } from './utils';
 
@@ -40,7 +40,8 @@ export async function openSnippetFile(group: Group, snippet: Snippet) {
     if (language) {
       await languages.setTextDocumentLanguage(editor.document, language);
     }
-  } catch (e) {
+  }
+  catch (e) {
     console.error(e);
   }
 }
@@ -59,11 +60,11 @@ export function closeSnippetFile() {
 
 const SNIPPETS_EXPIRED_TIME = 1000 * 60 * 60 * 24 * 30;
 export function clearExpiredCodeSnippetFiles() {
-  fsp.readdir(codeSnippetDir, { withFileTypes: true }).then(files => {
+  fsp.readdir(codeSnippetDir, { withFileTypes: true }).then((files) => {
     for (const file of files) {
       if (file.isFile()) {
         const filePath = path.join(codeSnippetDir, file.name);
-        fsp.stat(filePath).then(stat => {
+        fsp.stat(filePath).then((stat) => {
           if (stat.ctime.getTime() < Date.now() - SNIPPETS_EXPIRED_TIME) {
             fsp.rm(filePath);
           }

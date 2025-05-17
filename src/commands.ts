@@ -1,14 +1,15 @@
+import type { QuickPickItem, TextDocument } from 'vscode';
+import type { GroupTreeItem, SnippetTreeItem } from './provider';
+import type { Group, PostData, Snippet } from './types';
 import fs from 'node:fs';
 import path from 'node:path';
 import { mkdirp, rm, writeFile } from '@tomjs/node';
 import { getAllWorkspaceFolders, getCtx, i18n } from '@tomjs/vscode';
 import { cloneDeep } from 'es-toolkit';
-import type { QuickPickItem, TextDocument } from 'vscode';
 import { commands, QuickPickItemKind, Uri, window, workspace } from 'vscode';
 import { SUFFIX_CODE_SNIPPETS, SUFFIX_JSON } from './constant';
 import { getGroupIconPath, getGroups, isLanguageGroup, writeSnippetFile } from './data';
 import { closeSnippetPanel, openSnippetPanel } from './panel';
-import type { GroupTreeItem, SnippetTreeItem } from './provider';
 import { provider } from './provider';
 import {
   clearExpiredCodeSnippetFiles,
@@ -17,7 +18,6 @@ import {
   isCodeSnippetDir,
   openSnippetFile,
 } from './snippet';
-import type { Group, PostData, Snippet } from './types';
 import { GroupType } from './types';
 import {
   array2Text,
@@ -55,7 +55,7 @@ export async function registerCommands() {
 }
 
 async function pickGroup() {
-  const pickItems: (QuickPickItem & { group: Group })[] = getGroups().map(group => {
+  const pickItems: (QuickPickItem & { group: Group })[] = getGroups().map((group) => {
     return {
       label: group.name,
       description: isLanguageGroup(group) ? undefined : group.filePath,
@@ -76,7 +76,7 @@ function validateInputBox(values?: string[], oldValue?: string) {
     if (!value) {
       return i18n.t('rule.required');
     }
-    if (!/^\S+(\s+\S+)*$/.test(value)) {
+    if (!/^\S+(?:\s+\S+)*$/.test(value)) {
       return i18n.t('rule.whitespace');
     }
 
@@ -121,7 +121,7 @@ async function addGroupCommand() {
     },
     ...languages
       .filter(s => !groups.includes(s.lang))
-      .map(s => {
+      .map((s) => {
         return {
           label: s.lang,
           description: getLanguageTag(s),
@@ -141,7 +141,8 @@ async function addGroupCommand() {
   let fileName: string = '';
   if (pickGroup.type === GroupType.language) {
     fileName = pickGroup.label + SUFFIX_JSON;
-  } else {
+  }
+  else {
     const names = getGroups()
       .filter(s => s.type === pickGroup.type)
       .map(s => s.name);
@@ -160,8 +161,8 @@ async function addGroupCommand() {
     return;
   }
 
-  const destDir: string =
-    pickGroup.type === GroupType.workspace
+  const destDir: string
+    = pickGroup.type === GroupType.workspace
       ? path.join(pickGroup.destPath!, '.vscode')
       : getUserSnippetsPath();
   const dest = path.join(destDir, fileName);
@@ -181,7 +182,8 @@ async function editGroupCommand(treeItem?: GroupTreeItem) {
   if (!group) {
     group = await pickGroup();
   }
-  if (!group) return;
+  if (!group)
+    return;
 
   closeSnippetFileAndPanel();
 
@@ -193,10 +195,12 @@ async function deleteGroupCommand(treeItem?: GroupTreeItem) {
   if (!group) {
     group = await pickGroup();
   }
-  if (!group) return;
+  if (!group)
+    return;
 
   const confirm = await showPickYesOrNo(i18n.t('text.delete.confirm', group.name));
-  if (!confirm) return;
+  if (!confirm)
+    return;
 
   await rm(group.filePath);
 
@@ -212,14 +216,15 @@ async function renameGroupCommand(treeItem?: GroupTreeItem) {
   if (!group) {
     group = await pickGroup();
   }
-  if (!group) return;
+  if (!group)
+    return;
 
   const names = getGroups()
     .filter(
       s =>
-        s.type === group.type &&
-        path.dirname(s.filePath) === path.dirname(group.filePath) &&
-        s.name !== group.name,
+        s.type === group.type
+        && path.dirname(s.filePath) === path.dirname(group.filePath)
+        && s.name !== group.name,
     )
     .map(s => s.name);
 
@@ -281,7 +286,8 @@ async function pickSnippet(group: Group) {
     placeHolder: i18n.t('text.selectSnippet'),
   });
 
-  if (pick) return pick.snippet;
+  if (pick)
+    return pick.snippet;
 }
 
 async function addSnippetCommand(treeItem?: GroupTreeItem) {
@@ -289,7 +295,8 @@ async function addSnippetCommand(treeItem?: GroupTreeItem) {
   if (!group) {
     group = await pickGroup();
   }
-  if (!group) return;
+  if (!group)
+    return;
 
   closeSnippetFile();
 
@@ -313,11 +320,15 @@ async function addSnippetCommand(treeItem?: GroupTreeItem) {
 }
 
 async function editSnippetBodyCommand(group?: Group, snippet?: Snippet) {
-  if (!group) group = await pickGroup();
-  if (!group) return;
+  if (!group)
+    group = await pickGroup();
+  if (!group)
+    return;
 
-  if (!snippet) snippet = await pickSnippet(group);
-  if (!snippet) return;
+  if (!snippet)
+    snippet = await pickSnippet(group);
+  if (!snippet)
+    return;
 
   closeSnippetFileAndPanel();
   await openSnippetFile(group, snippet);
@@ -327,13 +338,16 @@ async function deleteSnippetCommand(treeItem?: SnippetTreeItem) {
   let { group, snippet } = treeItem || {};
   if (!treeItem) {
     group = await pickGroup();
-    if (!group) return;
+    if (!group)
+      return;
     snippet = await pickSnippet(group);
   }
-  if (!group || !snippet) return;
+  if (!group || !snippet)
+    return;
 
   const confirm = await showPickYesOrNo(i18n.t('text.delete.confirm', snippet.name));
-  if (!confirm) return;
+  if (!confirm)
+    return;
 
   await deleteSnippet(group, snippet.name);
 
@@ -363,10 +377,12 @@ async function editSnippetCommand(treeItem?: SnippetTreeItem) {
   let { group, snippet } = treeItem || {};
   if (!treeItem) {
     group = await pickGroup();
-    if (!group) return;
+    if (!group)
+      return;
     snippet = await pickSnippet(group);
   }
-  if (!group || !snippet) return;
+  if (!group || !snippet)
+    return;
 
   await openEditSnippetPanel(group, snippet);
 }
@@ -375,10 +391,12 @@ async function copySnippetCommand(treeItem?: SnippetTreeItem) {
   let { group, snippet } = treeItem || {};
   if (!treeItem) {
     group = await pickGroup();
-    if (!group) return;
+    if (!group)
+      return;
     snippet = await pickSnippet(group);
   }
-  if (!group || !snippet) return;
+  if (!group || !snippet)
+    return;
 
   const newSnippet = cloneDeep(snippet);
   newSnippet.id = shortId(Date.now().toString());
@@ -394,21 +412,24 @@ async function copySnippetCommand(treeItem?: SnippetTreeItem) {
 /* #endregion */
 
 async function onDidSaveTextDocument(doc?: TextDocument) {
-  if (!doc) return;
+  if (!doc)
+    return;
 
   const filePath = doc.fileName.toLocaleLowerCase();
   const groups = getGroups();
   if (groups.find(g => fixFilePath(g.filePath) === filePath)) {
     showInfo(i18n.t('text.save.success', filePath));
     provider.refresh();
-  } else {
+  }
+  else {
     if (!isCodeSnippetDir(filePath)) {
       return;
     }
     const fileName = path.basename(filePath);
     const [groupId, snippetId] = fileName.split('.');
     const group = getGroups().find(g => g.id === groupId);
-    if (!group || !Array.isArray(group.snippets)) return;
+    if (!group || !Array.isArray(group.snippets))
+      return;
 
     const snippet = group.snippets.find(s => s.id === snippetId);
     if (snippet) {

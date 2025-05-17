@@ -1,5 +1,5 @@
-import { Configuration } from '@tomjs/vscode';
 import type { UserConfig } from '../types';
+import { Configuration } from '@tomjs/vscode';
 
 export const configuration = new Configuration<UserConfig>('tomjs.snippets', {
   fixedLanguages: [],
@@ -11,18 +11,18 @@ function getArrayValue(key: string) {
   return Array.isArray(v) ? v : [];
 }
 
-export const getPropsFixedLanguages = (): string[] => {
+export function getPropsFixedLanguages(): string[] {
   return getArrayValue('fixedLanguages');
-};
+}
 
-export const updatePropsFixedLanguages = async (langs: string[]) => {
+export async function updatePropsFixedLanguages(langs: string[]) {
   await configuration.update('fixedLanguages', langs);
-};
+}
 
-export const getPropsScopeLanguages = (): string[] => {
+export function getPropsScopeLanguages(): string[] {
   return getArrayValue('scopeLanguages');
-};
+}
 
-export const updatePropScopeLanguages = async (langs: string[]) => {
+export async function updatePropScopeLanguages(langs: string[]) {
   await configuration.update('scopeLanguages', langs);
-};
+}

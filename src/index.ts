@@ -1,5 +1,5 @@
-import { initExtension } from '@tomjs/vscode';
 import type { ExtensionContext } from 'vscode';
+import { initExtension } from '@tomjs/vscode';
 import { registerCommands } from './commands';
 import { searchGroupSnippets } from './data';
 import { createSnippetsManagerTreeView } from './provider';

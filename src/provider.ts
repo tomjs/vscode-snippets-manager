@@ -1,4 +1,3 @@
-import { i18n } from '@tomjs/vscode';
 import type {
   CancellationToken,
   DataTransfer,
@@ -8,6 +7,8 @@ import type {
   TreeDragAndDropController,
   TreeView,
 } from 'vscode';
+import type { Group, Snippet } from './types';
+import { i18n } from '@tomjs/vscode';
 import {
   DataTransferItem,
   EventEmitter,
@@ -17,7 +18,6 @@ import {
   window,
 } from 'vscode';
 import { getGroupIconPath, getGroups, searchGroupSnippets, writeSnippetFile } from './data';
-import type { Group, Snippet } from './types';
 import { GroupType } from './types';
 import { getIconsPath, getSnippetLanguage } from './utils';
 
@@ -33,7 +33,8 @@ export class GroupTreeItem extends TreeItem {
 
     if (group.type === GroupType.language) {
       this.contextValue = 'group';
-    } else {
+    }
+    else {
       this.contextValue = 'scopeGroup';
       this.description = group.filePath;
     }
@@ -94,8 +95,8 @@ function getTreeItemCollapsibleState(group: Group, expandedGroupIds: string[]) {
 
 class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
   private _onDidChangeTreeData = new EventEmitter<GroupTreeItem | undefined | null | void>();
-  onDidChangeTreeData?: Event<void | TreeItem | TreeItem[] | null | undefined> =
-    this._onDidChangeTreeData.event;
+  onDidChangeTreeData?: Event<void | TreeItem | TreeItem[] | null | undefined>
+    = this._onDidChangeTreeData.event;
 
   treeView!: TreeView<TreeItem>;
 
@@ -104,6 +105,7 @@ class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
   getTreeItem(element: TreeItem): TreeItem | Thenable<TreeItem> {
     return element;
   }
+
   getChildren(element?: TreeItem): ProviderResult<TreeItem[]> {
     try {
       if (!element) {
@@ -111,7 +113,8 @@ class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
           group =>
             new GroupTreeItem(group, getTreeItemCollapsibleState(group, this.expandedGroupIds)),
         );
-      } else if (element instanceof GroupTreeItem) {
+      }
+      else if (element instanceof GroupTreeItem) {
         const { group } = element;
         if (group) {
           if (Array.isArray(group.snippets)) {
@@ -120,7 +123,8 @@ class SnippetsManagerTreeDataProvider implements TreeDataProvider<TreeItem> {
         }
       }
       return [];
-    } catch (e: any) {
+    }
+    catch (e: any) {
       console.error(e);
     }
 
@@ -157,10 +161,12 @@ class SnippetTreeDragAndDropController implements TreeDragAndDropController<Tree
     dataTransfer: DataTransfer,
     token: CancellationToken,
   ): Thenable<void> | void {
-    if (source.length !== 1 || token.isCancellationRequested) return;
+    if (source.length !== 1 || token.isCancellationRequested)
+      return;
 
     const node = source[0];
-    if (node instanceof GroupTreeItem) return;
+    if (node instanceof GroupTreeItem)
+      return;
 
     dataTransfer.set(MIMETYPE, new DataTransferItem(node));
   }
@@ -170,20 +176,22 @@ class SnippetTreeDragAndDropController implements TreeDragAndDropController<Tree
     dataTransfer: DataTransfer,
     token: CancellationToken,
   ) {
-    if (!target || token.isCancellationRequested) return;
+    if (!target || token.isCancellationRequested)
+      return;
 
     const transferItem = dataTransfer.get(MIMETYPE);
     const source: SnippetTreeItem = transferItem?.value;
-    if (!source) return;
+    if (!source)
+      return;
 
     const sg = source.group;
     const tg = target.group;
 
     if (
-      sg.filePath === tg.filePath &&
-      source instanceof SnippetTreeItem &&
-      target instanceof SnippetTreeItem &&
-      source.snippet.name === target.snippet.name
+      sg.filePath === tg.filePath
+      && source instanceof SnippetTreeItem
+      && target instanceof SnippetTreeItem
+      && source.snippet.name === target.snippet.name
     ) {
       return;
     }
@@ -199,10 +207,11 @@ class SnippetTreeDragAndDropController implements TreeDragAndDropController<Tree
     }
 
     // different group
-    if (!sameGroup && sg.type != tg.type) {
+    if (!sameGroup && sg.type !== tg.type) {
       if (tg.type === GroupType.language) {
         delete source.snippet.scope;
-      } else {
+      }
+      else {
         let scope = sg.name;
         if (scope === 'javascript') {
           scope = 'javascript,typescript';
@@ -218,7 +227,8 @@ class SnippetTreeDragAndDropController implements TreeDragAndDropController<Tree
 
     if (target instanceof GroupTreeItem) {
       tg.snippets = [source.snippet, ...tg.snippets];
-    } else {
+    }
+    else {
       const tIndex = tg.snippets.findIndex(s => s.name === target.snippet.name);
       if (tIndex !== -1) {
         tg.snippets.splice(tIndex + 1, 0, source.snippet);
@@ -230,19 +240,19 @@ class SnippetTreeDragAndDropController implements TreeDragAndDropController<Tree
     }
     await writeSnippetFile(tg.filePath, tg.snippets);
 
-    await provider.refresh();
+    await this.provider.refresh();
   }
 }
 
 export const provider = new SnippetsManagerTreeDataProvider();
 
-export const createSnippetsManagerTreeView = () => {
+export function createSnippetsManagerTreeView() {
   const treeView = window.createTreeView('tomjsSnippetsManager', {
     treeDataProvider: provider,
     dragAndDropController: new SnippetTreeDragAndDropController(provider),
   });
 
-  treeView.onDidCollapseElement(async e => {
+  treeView.onDidCollapseElement(async (e) => {
     const treeItem = e.element;
     if (treeItem instanceof GroupTreeItem) {
       const ids = provider.expandedGroupIds;
@@ -254,7 +264,7 @@ export const createSnippetsManagerTreeView = () => {
     }
   });
 
-  treeView.onDidExpandElement(async e => {
+  treeView.onDidExpandElement(async (e) => {
     const treeItem = e.element;
     if (treeItem instanceof GroupTreeItem) {
       const ids = provider.expandedGroupIds;
@@ -267,4 +277,4 @@ export const createSnippetsManagerTreeView = () => {
   });
 
   provider.treeView = treeView;
-};
+}

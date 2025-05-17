@@ -1,3 +1,4 @@
+import type { App } from 'vue';
 import {
   provideVSCodeDesignSystem,
   vsCodeButton,
@@ -5,7 +6,6 @@ import {
   vsCodeTextArea,
   vsCodeTextField,
 } from '@vscode/webview-ui-toolkit';
-import type { App } from 'vue';
 import Checkbox from './Checkbox';
 import Input from './Input';
 import TextArea from './TextArea';

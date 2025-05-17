@@ -1,15 +1,12 @@
 <script lang="ts" setup>
-import { type RuleExpression, useField } from 'vee-validate';
-import { type MaybeRef, ref, watch } from 'vue';
+import type { RuleExpression } from 'vee-validate';
+import type { MaybeRef } from 'vue';
+import { useField } from 'vee-validate';
+import { ref, watch } from 'vue';
 
 defineOptions({
   name: 'VsCheckbox',
 });
-
-export interface CheckboxOptions {
-  value: string;
-  label: string;
-}
 
 const props = defineProps<{
   label: string;
@@ -23,6 +20,11 @@ const emit = defineEmits<{
   (e: 'update:value', value: string[]): void;
 }>();
 
+export interface CheckboxOptions {
+  value: string;
+  label: string;
+}
+
 const { errorMessage, setValue, meta } = useField(() => props.name, props.rules, {
   initialValue: props.value,
   syncVModel: 'value',
@@ -32,7 +34,7 @@ const _value = ref(props.value || []);
 
 watch(
   () => props.value,
-  value => {
+  (value) => {
     _value.value = value || [];
     setValue(_value.value);
   },
@@ -44,7 +46,7 @@ function formatOptions(values?: (CheckboxOptions | string)[]) {
   if (!Array.isArray(values)) {
     return [];
   }
-  return values.map(s => {
+  return values.map((s) => {
     if (typeof s === 'string') {
       return { label: s, value: s };
     }
@@ -60,23 +62,24 @@ watch(
   },
 );
 
-const onChange = (e: InputEvent, value: string) => {
+function onChange(e: InputEvent, value: string) {
   const checked = (e.target as HTMLInputElement).checked;
   if (checked) {
     if (!_value.value.includes(value)) {
       _value.value.push(value);
     }
-  } else {
+  }
+  else {
     _value.value = _value.value.filter(v => v !== value);
   }
 
   setValue(_value.value);
   emit('update:value', _value.value);
-};
+}
 </script>
 
 <template>
-  <div class="component-wrapper" :class="{ 'has-error': !!errorMessage, success: meta.valid }">
+  <div class="component-wrapper" :class="{ 'has-error': !!errorMessage, 'success': meta.valid }">
     <label :for="name">{{ label }}</label>
     <template v-if="Array.isArray(_options)">
       <vscode-checkbox
@@ -84,8 +87,9 @@ const onChange = (e: InputEvent, value: string) => {
         :key="item.value"
         :checked="_value.includes(item.value)"
         @change="onChange($event, item.value)"
-        >{{ item.label }}</vscode-checkbox
       >
+        {{ item.label }}
+      </vscode-checkbox>
     </template>
     <p v-show="errorMessage || meta.valid" class="help-message">
       {{ errorMessage }}
@@ -94,5 +98,5 @@ const onChange = (e: InputEvent, value: string) => {
 </template>
 
 <style lang="scss" scoped>
-@import '../style.scss';
+@import '../style';
 </style>

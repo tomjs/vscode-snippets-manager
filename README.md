@@ -25,7 +25,7 @@ This project is inspired by the extension [Easy Snippet](https://marketplace.vis
 
 ### 属性 Properties
 
-- `tomjs.snippets.fixedLanguages`：代码片段优先可选语言。Optional languages ​​for snippets to be displayed first
+- `tomjs.snippets.fixedLanguages`：代码片段优先可选语言。Optional languages for snippets to be displayed first
 - `tomjs.snippets.scopeLanguages`：代码片段 scope 属性的可选语言，未配置时为所有被支持的语言。Optional languages for the scope attribute of the snippets. If not configured, it will be all supported languages.
 
 比如前端开发者，可以如下设置 For example, front-end developers can set it as follows

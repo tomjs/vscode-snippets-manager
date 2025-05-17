@@ -1,5 +1,5 @@
-import { getCtx } from '@tomjs/vscode';
 import type { PostData } from '../types';
+import { getCtx } from '@tomjs/vscode';
 
 const USED_LANGUAGES_KEY = 'used_Languages';
 
